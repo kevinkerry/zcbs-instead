@@ -1,0 +1,287 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>批量代收,代付,查询</title>
+<style type="text/css">
+body {
+	margin:0px;
+	font-size:13px;
+	font-family:Arial;
+} 
+#container{
+	position:relative;
+	width:100%;
+}
+#banner{
+	height:20px;
+	border:1px solid #000000;
+	text-align:center;
+	background-color:#a2d9ff;
+	padding:10px;
+	margin-bottom:2px;
+}
+#content{
+	float:left;
+	text-align:center;
+	padding-right:200px;	
+}
+#links{
+	float:left;
+	width:33.1%;
+	height:500px;
+	border:1px solid #000000;
+	text-align:left;
+}
+#footer{
+	clear:both;			
+	text-align:center;
+	height:30px;
+	border:1px solid #000000;
+}
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<div id="container">
+	<div id="banner">
+		<strong>加密解密demo</strong>
+	</div>
+	
+	<div id="links">
+		<h2>加密后的密文</h2>
+		<form id="miresult" action="deco">
+		<div style="width:100% ;word-wrap:break-word; overflow:hidden;">
+			<h3>sign:</h3>
+			<div id="divsign"></div>
+			<input id="sign" type="hidden" name="sign" />
+		</div>
+		<div style="width:100% ;word-wrap:break-word; overflow:hidden;">
+			<h3>addit:</h3>
+			<div id="divaddit"></div>
+			<input id="addit" type="hidden" name="addit" '/>
+		</div>
+		<div style="width:100% ;word-wrap:break-word; overflow:hidden;">
+			<h3>data:</h3>
+			<div id="divdata"></div>
+			<input id="data" type="hidden" name="data" />
+		</div>
+		<div>
+		<h2>解密:<input type="submit" value="解密"></h2>
+		</div>
+		</form>
+	</div>
+</div>
+<div id="container">
+	<div id="links">
+		<h2>交易查询</h2>
+		<form id="tradequery" action="tradequery">
+			<table>
+			<tr>
+				<td style="text-align: center">	版本	:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: center">	编码方式	:<input type="text"  name="encoding" value="1"/></td>
+			</tr>
+			<tr>
+				<td style="text-align: center">	交易类型	:<input type="text"  name="txnType" value="03"/></td>
+				<td style="text-align: center">	交易子类	:<input type="text"  name="txnSubType" value="00"/></td>
+				</tr>
+			<tr>
+				<td style="text-align: center">	产品类型	:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: center">	商户代码	:<input type="text"  name="merId" value="200000000000610"/></td>
+				</tr>
+			<tr>
+				<td style="text-align: center">	批次号	:<input type="text"  name="batchNo" value="0006"/></td>
+				<td style="text-align: center">	原批次交易日期	:<input type="text"  name="txnDate" value="20170305"/></td>
+				</tr>
+			<tr>
+				<td style="text-align: center">	批次发送时间	:<input type="text"  name="txnTime" value="050505"/></td>
+				<td style="text-align: center">	订单类型	:<input type="text"  name="busiType" value="01"/></td>
+				</tr>
+			</table>
+			<h2>加密:<input type="button" value="加密" onclick="enc('tradequery')"></h2>
+			<h2>请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
+		</form> 
+	</div>
+	<div id="links">
+		<h2>批量代付</h2>
+		<form id="paysubmit" action="paysubmit"> 
+			<table>
+				<tr>
+				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="02"/></td>
+				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">通知地址:<input type="text"  name="backUrl" value="www.baidu.com"/></td>
+				<td style="text-align: center">批次号:<input type="text"  name="batchNo" value="0006"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
+				<td style="text-align: center">总笔数:<input type="text"  name="totalQty" value="10"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">总金额 :<input type="text"  name="totalAmt" value="10"/></td>
+				<td style="text-align: center">文件内容:<input type="text"  name="fileContent" value="11"/></td>
+				</tr>
+				
+				
+				<tr>
+				<td style="text-align: center">	商户订单号	:<input type="text"  name="orderId" value="1111"/></td>
+				<td style="text-align: center">	交易币种	:<input type="text"  name="currencyCode" value="156"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	单笔金额	:<input type="text"  name="amt" value="13"/></td>
+				<td style="text-align: center">	付款人银行号	:<input type="text"  name="debtorBank" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	付款人账号	:<input type="text"  name="debtorAccount" value="1111"/></td>
+				<td style="text-align: center">	付款人名称	:<input type="text"  name="debtorName" value="1111"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	付款合同号	:<input type="text"  name="debtorConsign" value="10000000002103"/></td>
+				<td style="text-align: center">	收款人银行号	:<input type="text"  name="creditorBank" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	收款人账号	:<input type="text"  name="creditorAccount" value="1"/></td>
+				<td style="text-align: center">	收款人名称	:<input type="text"  name="creditorName" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	业务种类编码	:<input type="text"  name="proprietary" value="21"/></td>
+				<td style="text-align: center">	摘要	:<input type="text"  name="summary" value="22"/></td>
+				</tr>
+			</table>
+			<h2>加密:<input type="button" value="加密" onclick="enc('paysubmit')"></h2>
+			<h2>请求:<input type="button" value="请求接口" onclick="askApi('paysubmit')"></h2>
+		</form>
+	</div>
+	<div id="links">
+		<h2>批量代收</h2>
+		<form id="collectsubmit" action="collectsubmit"> 
+			<table>
+			<tr>
+				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="01"/></td>
+				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">通知地址:<input type="text"  name="backUrl" value="www.baidu.com"/></td>
+				<td style="text-align: center">批次号:<input type="text"  name="batchNo" value="0006"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
+				<td style="text-align: center">总笔数:<input type="text"  name="totalQty" value="10"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">总金额 :<input type="text"  name="totalAmt" value="10"/></td>
+				<td style="text-align: center">文件内容:<input type="text"  name="fileContent" value="11"/></td>
+				</tr>
+				
+				
+				<tr>
+				<td style="text-align: center">	商户订单号	:<input type="text"  name="orderId" value="1111"/></td>
+				<td style="text-align: center">	交易币种	:<input type="text"  name="currencyCode" value="156"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	单笔金额	:<input type="text"  name="amt" value="13"/></td>
+				<td style="text-align: center">	付款人银行号	:<input type="text"  name="debtorBank" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	付款人账号	:<input type="text"  name="debtorAccount" value="1111"/></td>
+				<td style="text-align: center">	付款人名称	:<input type="text"  name="debtorName" value="1111"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	付款合同号	:<input type="text"  name="debtorConsign" value="10000000002103"/></td>
+				<td style="text-align: center">	收款人银行号	:<input type="text"  name="creditorBank" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	收款人账号	:<input type="text"  name="creditorAccount" value="1"/></td>
+				<td style="text-align: center">	收款人名称	:<input type="text"  name="creditorName" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">	业务种类编码	:<input type="text"  name="proprietary" value="21"/></td>
+				<td style="text-align: center">	摘要	:<input type="text"  name="summary" value="22"/></td>
+				</tr>
+			</table>
+			<h2>加密:<input type="button" value="加密" onclick="enc('collectsubmit')"></h2>
+			<h2>请求:<input type="button" value="请求接口" onclick="askApi('collectsubmit')"></h2>
+	</div>
+	<div id="links">
+		<h2>返回的结果</h2>
+		<div id="showInfo" style="width:100% ;word-wrap:break-word; overflow:hidden;">
+		
+		</div>
+	</div>
+</div>
+<script>
+	function askApi(){
+		$.ajax({
+                type: "POST",
+                url:"payAndCollectApi",
+                data:$('#miresult').serialize(),
+                async: false,
+                error: function(request) {
+                    alert(request.responseJSON.message);
+                },
+                success: function(data) {
+                	data=JSON.stringify(data);
+                	alert(data);
+                	var html ='<p>'+data;
+                	html+='</p>';
+                    var divshow = $("#showInfo");
+				    divshow.text("");
+				    divshow.append(html); 
+                }
+            })
+		}
+	
+	function enc(urlid){
+		var re=$('#tradequery').serialize();
+		var re1=$('#collectsubmit').serialize();
+		var re2=$('#paysubmit').serialize();
+		$.ajax({
+                type: "POST",
+                url:urlid,
+                data:$('#'+urlid).serialize(),
+                async: false,
+                error: function(request) {
+                    alert(request.responseJSON.message);
+                },
+                success: function(data) {
+                	$("#sign").val(data.sign)
+                	$("#addit").val(data.addit)
+                	$("#data").val(data.data)
+                	
+                	var sign ='<p>'+data.sign;
+                	sign+='</p>';
+                	var divsign = $("#divsign");
+                	divsign.text("");
+                	divsign.append(sign); 
+                	
+                	var datas ='<p>'+data.data;
+                	datas+='</p>';
+                	var divdata = $("#divdata");
+                	divdata.text("");
+                	divdata.append(datas); 
+                	
+                	var addit ='<p>'+data.addit;
+                	addit+='</p>';
+                	var divaddit = $("#divaddit");
+                	divaddit.text("");
+                	divaddit.append(addit); 
+                }
+            })
+		}
+</script>
+</body>
+</html>

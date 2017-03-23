@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	<dubbo:reference id="messageDecodeService" interface="com.zcbspay.platform.support.signaturn.service.MessageDecodeService" check="false" version="1.0"/>
+	<dubbo:reference id="messageEncryptService" interface="com.zcbspay.platform.support.signaturn.service.MessageEncryptService" check="false" version="1.0"/>
+	<dubbo:reference id="realtimeCollection" interface="com.zcbspay.platform.business.concentrate.realtime.service.RealtimeCollection" check="false" version="1.0"/>
+	<dubbo:reference id="realtimePayment" interface="com.zcbspay.platform.business.concentrate.realtime.service.RealtimePayment" check="false" version="1.0"/>
+	<dubbo:reference id="queryOrderService" interface="com.zcbspay.platform.business.order.service.OrderQueryService" check="false" version="1.0"/>
+	<dubbo:reference id="merchMKService" interface="com.zcbspay.platform.member.merchant.service.MerchMKService" check="false" version="1.0"/>
+</beans>
