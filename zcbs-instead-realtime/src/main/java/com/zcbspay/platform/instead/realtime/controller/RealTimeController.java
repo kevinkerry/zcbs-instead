@@ -60,7 +60,7 @@ public class RealTimeController {
 	@ResponseBody
 	@RequestMapping("payAndCollectApi")
 	public MessageBean payAndCollectApi(MessageBean messageBean) {
-		MessageBean requestBean=null;
+		MessageBean requestBean = null;
 		ResponseBaseBean responseBaseBean = new ResponseBaseBean();
 		try {
 			// 验签,解密
@@ -69,7 +69,7 @@ public class RealTimeController {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.decodeError.getCode());
 			responseBaseBean.setRespMsg(ResponseTypeEnum.decodeError.getMessage());
-			return encrypt(responseBaseBean,messageBean);
+			return encrypt(responseBaseBean, messageBean);
 		}
 		try {
 			// 获取基础信息
@@ -86,12 +86,11 @@ public class RealTimeController {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			responseBaseBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
-			return encrypt(responseBaseBean,messageBean);
+			return encrypt(responseBaseBean, messageBean);
 		}
 	}
 
-	
-	private MessageBean encrypt(ResponseBaseBean responseBaseBean,MessageBean messageBean){
+	private MessageBean encrypt(ResponseBaseBean responseBaseBean, MessageBean messageBean) {
 		try {
 			return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
 					(AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class));
@@ -100,8 +99,7 @@ public class RealTimeController {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping("i")
 	public String index() {
 		return "index";
@@ -134,6 +132,14 @@ public class RealTimeController {
 	@ResponseBody
 	@RequestMapping("tradequery")
 	public MessageBean tradequery(RealTimeQueryReqBean realTimeQueryReqBean) {
+
+		// 确定处理类
+		collectAndPaySerivce = (CollectAndPayService) SpringContextHelper
+				.getBean(RealTimeTxnTypeEnum.getTxnTypeEnum(realTimeQueryReqBean.getTxnType()).getClassName());
+		MessageBean messageBean =new MessageBean();
+		messageBean.setData(JSONObject.fromObject(realTimeQueryReqBean).toString());
+		collectAndPaySerivce.invoke(messageBean);
+
 		return encryptData(realTimeQueryReqBean);
 	}
 

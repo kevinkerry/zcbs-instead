@@ -42,9 +42,9 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 			realTimeQueryResBean = BeanCopyUtil.copyBean(RealTimeQueryResBean.class, reqBean);
 			ValidateLocator.validateBeans(reqBean);
 			
-			if ("01".equals(reqBean.getOrderType())) {// 批量代收
+			if ("01".equals(reqBean.getOrderType())) {// 实时代收
 				resultBean = realTimeTradeQuery.queryConcentrateCollectionOrder(reqBean.getTn());
-			} else if ("02".equals(reqBean.getOrderType())) {// 批量代付
+			} else if ("02".equals(reqBean.getOrderType())) {// 实时代付
 				resultBean = realTimeTradeQuery.queryConcentratePaymentOrder(reqBean.getTn());
 			}
 			if (!resultBean.isResultBool()) {

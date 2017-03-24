@@ -115,6 +115,15 @@ public class BatchController {
 			list.add(batchCollectAndPayFileContent);
 		}
 		realTimePayReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
+		
+		/*// 确定处理类
+		collectAndPaySerivce = (CollectAndPayService) SpringContextHelper
+							.getBean(BatchTxnTypeEnum.getTxnTypeEnum(realTimePayReqBean.getTxnType()).getClassName());
+		MessageBean messageBean=new MessageBean();
+		messageBean.setData(JSONObject.fromObject(realTimePayReqBean).toString());
+		collectAndPaySerivce.invoke(messageBean);*/
+		
+		
 		return encryptData(realTimePayReqBean);
 
 	}
