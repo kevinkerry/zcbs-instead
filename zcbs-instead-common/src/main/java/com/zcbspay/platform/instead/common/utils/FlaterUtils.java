@@ -2,7 +2,6 @@ package com.zcbspay.platform.instead.common.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
