@@ -59,7 +59,7 @@ public class BatchPayServiceImpl implements CollectAndPayService{
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
 					batchPayResBean.setRespCode(responseTypeEnum.getCode());
-					batchPayResBean.setRespMsg(resultBean.getResultObj().toString());
+					batchPayResBean.setRespMsg(resultBean.getErrMsg().toString());
 				}else {
 					batchPayResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 					batchPayResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());

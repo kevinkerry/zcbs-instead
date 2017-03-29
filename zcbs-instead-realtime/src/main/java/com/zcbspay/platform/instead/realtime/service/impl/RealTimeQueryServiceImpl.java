@@ -51,7 +51,7 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
 					realTimeQueryResBean.setRespCode(responseTypeEnum.getCode());
-					realTimeQueryResBean.setRespMsg(resultBean.getResultObj().toString());
+					realTimeQueryResBean.setRespMsg(resultBean.getErrMsg().toString());
 				}else {
 					realTimeQueryResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 					realTimeQueryResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
