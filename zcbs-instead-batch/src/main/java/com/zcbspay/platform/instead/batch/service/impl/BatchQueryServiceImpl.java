@@ -46,8 +46,14 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 			}
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
-				batchQueryResBean.setRespCode(responseTypeEnum.getCode());
-				batchQueryResBean.setRespMsg(responseTypeEnum.getMessage());
+				if (responseTypeEnum!=null) {
+					batchQueryResBean.setRespCode(responseTypeEnum.getCode());
+					batchQueryResBean.setRespMsg(resultBean.getResultObj().toString());
+				}else {
+					batchQueryResBean.setRespCode(ResponseTypeEnum.fail.getCode());
+					batchQueryResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+				}
+				
 			} else {
 				batchQueryResBean.setRespCode(ResponseTypeEnum.success.getCode());
 				batchQueryResBean.setRespMsg(ResponseTypeEnum.success.getMessage());

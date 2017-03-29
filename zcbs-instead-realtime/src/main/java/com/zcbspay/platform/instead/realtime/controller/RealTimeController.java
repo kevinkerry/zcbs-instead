@@ -138,7 +138,7 @@ public class RealTimeController {
 				.getBean(RealTimeTxnTypeEnum.getTxnTypeEnum(realTimeQueryReqBean.getTxnType()).getClassName());
 		MessageBean messageBean =new MessageBean();
 		messageBean.setData(JSONObject.fromObject(realTimeQueryReqBean).toString());
-		collectAndPaySerivce.invoke(messageBean);
+//		collectAndPaySerivce.invoke(messageBean);
 
 		return encryptData(realTimeQueryReqBean);
 	}

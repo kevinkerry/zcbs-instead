@@ -57,8 +57,13 @@ public class BatchPayServiceImpl implements CollectAndPayService{
 			ResultBean resultBean =batchPayment.pay(batchPaymentBean);
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
-				batchPayResBean.setRespCode(responseTypeEnum.getCode());
-				batchPayResBean.setRespMsg(responseTypeEnum.getMessage());
+				if (responseTypeEnum!=null) {
+					batchPayResBean.setRespCode(responseTypeEnum.getCode());
+					batchPayResBean.setRespMsg(resultBean.getResultObj().toString());
+				}else {
+					batchPayResBean.setRespCode(ResponseTypeEnum.fail.getCode());
+					batchPayResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+				}
 			}else {
 				batchPayResBean.setRespCode(ResponseTypeEnum.success.getCode());
 				batchPayResBean.setRespMsg(ResponseTypeEnum.success.getMessage());
