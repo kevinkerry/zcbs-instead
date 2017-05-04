@@ -11,4 +11,5 @@
 	<dubbo:reference id="batchPayment" interface="com.zcbspay.platform.business.concentrate.batch.service.BatchPayment" check="false" version="1.0"/>
 	<dubbo:reference id="queryOrderService" interface="com.zcbspay.platform.business.order.service.OrderQueryService" check="false" version="1.0"/>
 	<dubbo:reference id="merchMKService" interface="com.zcbspay.platform.member.merchant.service.MerchMKService" check="false" version="1.0"/>
+	<dubbo:reference id="contractService" interface="com.zcbspay.platform.business.merch.service.ContractBizService" check="false" version="1.0"/>
 </beans>

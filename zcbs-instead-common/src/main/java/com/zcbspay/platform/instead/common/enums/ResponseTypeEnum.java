@@ -40,6 +40,12 @@ public enum ResponseTypeEnum {
 	exception28("0728","交易失败，商户参数错误","PC028"),
 	exception29("0801","合同信息校验失败","BC001"),
 	exception30("0802","批量的校验结果","BC002"),
+	
+	exception301("0802","合同编号不能为空","BC003"),
+	exception302("0802","合同服务异常","BC004"),
+	exception303("0802","合同信息有误","BC005"),
+	exception304("0802","批量添加的结果","BC006"),
+	
 	exception31("0803","通过","CT00"),
 	exception32("0804","付款人名称不符","CT01"),
 	exception33("0805","付款人账号不符","CT02"),

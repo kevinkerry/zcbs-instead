@@ -8,6 +8,10 @@ public enum BatchTxnTypeEnum {
 	pay("02", "00","batchPayService"),
 	// 交易查询
 	query("03", "00","batchQueryService"),
+	//批量导入
+	batchImport("05", "00","batchImportService"),
+	//合同查询
+	contract("06", "00","contractQueryService"),
 	;
 
 	private String txnType; // 交易类型

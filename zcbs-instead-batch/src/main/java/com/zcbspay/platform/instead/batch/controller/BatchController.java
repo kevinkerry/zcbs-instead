@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zcbspay.platform.instead.batch.bean.BatchCollectAndPayFileContent;
 import com.zcbspay.platform.instead.batch.bean.BatchCollectReqBean;
+import com.zcbspay.platform.instead.batch.bean.BatchImportFileContent;
+import com.zcbspay.platform.instead.batch.bean.BatchImportReqBean;
 import com.zcbspay.platform.instead.batch.bean.BatchPayReqBean;
 import com.zcbspay.platform.instead.batch.bean.BatchQueryReqBean;
+import com.zcbspay.platform.instead.batch.bean.ContractQueryReqBean;
 import com.zcbspay.platform.instead.batch.helper.SpringContextHelper;
 import com.zcbspay.platform.instead.batch.service.CollectAndPayService;
 import com.zcbspay.platform.instead.common.bean.BaseBean;
@@ -139,6 +142,30 @@ public class BatchController {
 		realTimeCollectReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
 		return encryptData(realTimeCollectReqBean);
 	}
+	
+	
+	@ResponseBody
+	@RequestMapping("batchimportsubmit")
+	public MessageBean batchimportsubmit(BatchImportReqBean batchImportReqBean,
+			BatchImportFileContent batchCollectAndPayFileContent) {
+		List<BatchImportFileContent> list = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			list.add(batchCollectAndPayFileContent);
+		}
+		batchImportReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
+		return encryptData(batchImportReqBean);
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("contractsubmit")
+	public MessageBean contractsubmit(ContractQueryReqBean contractQueryReqBean) {
+		return encryptData(contractQueryReqBean);
+	}
+	
+	
+	
+	
 
 	@ResponseBody
 	@RequestMapping("tradequery")

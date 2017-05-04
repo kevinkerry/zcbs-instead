@@ -27,7 +27,12 @@ import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
+/**
+ * 批量代收服务
+ * @author: zhangshd
+ * @date:   2017年5月3日 上午9:47:43   
+ * @version :v1.0
+ */
 @Service("batchCollectService")
 public class BatchCollectServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(BatchCollectServiceImpl.class);

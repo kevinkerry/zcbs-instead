@@ -215,6 +215,103 @@ body {
 			</table>
 			<h2>加密:<input type="button" value="加密" onclick="enc('collectsubmit')"></h2>
 			<h2>请求:<input type="button" value="请求接口" onclick="askApi('collectsubmit')"></h2>
+			</form>
+	</div>
+	<div id="links">
+		<h2>批量导入</h2>
+		<form id="batchimportsubmit" action="batchimportsubmit"> 
+			<table>
+			<tr>
+				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="05"/></td>
+				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				</tr>
+				<tr>
+					<td style="text-align: center">批次号:<input type="text"  name="batchNo" value="0006"/></td>
+					<td style="text-align: center">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">合同编号:<input type="text"  name="contractnum" value="0006"/></td>
+				<td style="text-align: center">合同类型:<input type="text"  name="contracttype" value="00"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">付款人名称:<input type="text"  name="debtorname" value="0008"/></td>
+				<td style="text-align: center">付款人账号:<input type="text"  name="debtoraccountno" value="0009"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">付款行行号:<input type="text"  name="debtorbranchcode" value="0010"/></td>
+				<td style="text-align: center">付款单笔金额上限:<input type="text"  name="debtoramountlimit" value="0011"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">付款金额限制类型:<input type="text"  name="debtortransamtlimittype" value="00"/></td>
+				<td style="text-align: center">付款累计金额上限:<input type="text"  name="debtoraccuamountlimit" value="0013"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">付款次数限制类型:<input type="text"  name="debtortransnumlimittype" value="00"/></td>
+				<td style="text-align: center">付款次数限制:<input type="text"  name="debtortranslimit" value="0015"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">收款人名称:<input type="text"  name="creditorname" value="0016"/></td>
+				<td style="text-align: center">收款人账号:<input type="text"  name="creditoraccountno" value="0017"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">收款行行号:<input type="text"  name="creditorbranchcode" value="0018"/></td>
+				<td style="text-align: center">收款单笔金额上限:<input type="text"  name="creditoramountlimit" value="0019"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">收款金额限制类型:<input type="text"  name="creditortransamtlimittype" value="00"/></td>
+				<td style="text-align: center">收款累计金额上限:<input type="text"  name="creditoraccuamountlimit" value="0021"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">收款次数限制类型:<input type="text"  name="creditortransnumlimittype" value="00"/></td>
+				<td style="text-align: center">收款次数限制:<input type="text"  name="creditortranslimit" value="0023"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">合约开始日期:<input type="text"  name="signdate" value="0024"/></td>
+				<td style="text-align: center">合约终止日期:<input type="text"  name="expirydate" value="0025"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">合同附件名称:<input type="text"  name="fileaddress" value="0026"/></td>
+				<td style="text-align: center">业务类型:<input type="text"  name="categorypurpose" value="00"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">业务种类:<input type="text"  name="proprietary" value="0028"/></td>
+				</tr>
+			</table>
+			<h2>加密:<input type="button" value="加密" onclick="enc('batchimportsubmit')"></h2>
+			<h2>请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
+			</form>
+	</div>
+	<div id="links">
+		<h2>合同查询</h2>
+		<form id="contractsubmit" action="contractsubmit"> 
+			<table>
+			<tr>
+				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="06"/></td>
+				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				</tr>
+				<tr>
+					<td style="text-align: center">合同编号:<input type="text"  name="contractnum" value="0006"/></td>
+				</tr>
+			</table>
+			<h2>加密:<input type="button" value="加密" onclick="enc('contractsubmit')"></h2>
+			<h2>请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
+			</form>
 	</div>
 	<div id="links">
 		<h2>返回的结果</h2>
@@ -249,6 +346,7 @@ body {
 		var re=$('#tradequery').serialize();
 		var re1=$('#collectsubmit').serialize();
 		var re2=$('#paysubmit').serialize();
+		var re3=$('#batchimportsubmit').serialize();
 		$.ajax({
                 type: "POST",
                 url:urlid,

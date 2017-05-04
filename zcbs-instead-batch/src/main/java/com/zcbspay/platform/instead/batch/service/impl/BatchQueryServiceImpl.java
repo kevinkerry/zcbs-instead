@@ -21,7 +21,12 @@ import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
+/**
+ * 批量查询服务
+ * @author: zhangshd
+ * @date:   2017年5月3日 上午9:48:19   
+ * @version :v1.0
+ */
 @Service("batchQueryService")
 public class BatchQueryServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(BatchQueryServiceImpl.class);
@@ -60,7 +65,7 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 				BatchResultBean batchResultBean = (BatchResultBean) resultBean.getResultObj();
 				BeanCopyUtil.copyBean(batchQueryResBean, batchResultBean);
 				batchQueryResBean.setFileContent(
-						FlaterUtils.inflater(JSONArray.fromObject(batchResultBean.getFileContentList()).toString()));
+						FlaterUtils.deflater(JSONArray.fromObject(batchResultBean.getFileContentList()).toString()));
 			}
 		} catch (DataErrorException e) {
 			e.printStackTrace();
