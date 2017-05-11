@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zcbspay.platform.business.concentrate.bean.FileContentBean;
 import com.zcbspay.platform.business.merch.bean.ContractQueryFileContent;
 import com.zcbspay.platform.business.merch.bean.ResultBean;
 import com.zcbspay.platform.business.merch.service.ContractBizService;
@@ -20,7 +19,6 @@ import com.zcbspay.platform.instead.common.utils.FlaterUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
 import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 /**
  * 批量查询服务

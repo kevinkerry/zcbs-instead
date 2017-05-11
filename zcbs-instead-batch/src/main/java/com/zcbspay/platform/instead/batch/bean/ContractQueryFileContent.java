@@ -5,8 +5,6 @@ import java.io.Serializable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.zcbspay.platform.instead.common.bean.BaseBean;
-
 /**
  * 合同查询导入内容类
  * 
@@ -35,15 +33,15 @@ public class ContractQueryFileContent implements Serializable  {
 	@Length(max = 14,message="[付款人账号]长度不符合规范")
 	@NotEmpty(message="[付款人账号]不能为空")
 	private String	debtorbranchcode	;//	付款行行号
-	@Length(max = 12,message="[付款单笔金额上限]长度不符合规范")
+	//@Length(max = 12,message="[付款单笔金额上限]长度不符合规范")
 	private String	debtoramountlimit	;//	付款单笔金额上限
-	@Length(max = 2,message="[付款金额限制类型]长度不符合规范")
+	//@Length(max = 2,message="[付款金额限制类型]长度不符合规范")
 	private String	debtortransamtlimittype	;//	付款金额限制类型
-	@Length(max = 12,message="[付款累计金额上限]长度不符合规范")
+	//@Length(max = 12,message="[付款累计金额上限]长度不符合规范")
 	private String	debtoraccuamountlimit	;//	付款累计金额上限
-	@Length(max = 2,message="[付款次数限制类型]长度不符合规范")
+	//@Length(max = 2,message="[付款次数限制类型]长度不符合规范")
 	private String	debtortransnumlimittype	;//	付款次数限制类型
-	@Length(max = 12,message="[付款次数限制]长度不符合规范")
+	//@Length(max = 12,message="[付款次数限制]长度不符合规范")
 	private String	debtortranslimit	;//	付款次数限制
 	@Length(max = 60,message="[收款人名称]长度不符合规范")
 	@NotEmpty(message="[收款人名称]不能为空")
@@ -54,15 +52,15 @@ public class ContractQueryFileContent implements Serializable  {
 	@Length(max = 32,message="[收款行行号]长度不符合规范")
 	@NotEmpty(message="[收款行行号]不能为空")
 	private String	creditorbranchcode	;//	收款行行号
-	@Length(max = 12,message="[收款单笔金额上限]长度不符合规范")
+	//@Length(max = 12,message="[收款单笔金额上限]长度不符合规范")
 	private String	creditoramountlimit	;//	收款单笔金额上限
-	@Length(max = 2,message="[收款金额限制类型]长度不符合规范")
+	//@Length(max = 2,message="[收款金额限制类型]长度不符合规范")
 	private String	creditortransamtlimittype	;//	收款金额限制类型
-	@Length(max = 12,message="[收款累计金额上限]长度不符合规范")
+	//@Length(max = 12,message="[收款累计金额上限]长度不符合规范")
 	private String	creditoraccuamountlimit	;//	收款累计金额上限
-	@Length(max = 2,message="[收款次数限制类型]长度不符合规范")
+	//@Length(max = 2,message="[收款次数限制类型]长度不符合规范")
 	private String	creditortransnumlimittype	;//	收款次数限制类型
-	@Length(max = 12,message="[收款次数限制]长度不符合规范")
+	//@Length(max = 12,message="[收款次数限制]长度不符合规范")
 	private String	creditortranslimit	;//	收款次数限制
 	@Length(max = 8,message="[合约开始日期]长度不符合规范")
 	@NotEmpty(message="[合约开始日期]不能为空")
@@ -73,11 +71,11 @@ public class ContractQueryFileContent implements Serializable  {
 	@Length(max = 128,message="[合同附件名称]长度不符合规范")
 	@NotEmpty(message="[合同附件名称]不能为空")
 	private String	fileaddress	;//	合同附件名称
-	@Length(max = 12,message="[业务类型]长度不符合规范")
-	@NotEmpty(message="[业务类型]不能为空")
+	//@Length(max = 12,message="[业务类型]长度不符合规范")
+	//@NotEmpty(message="[业务类型]不能为空")
 	private String	categorypurpose	;//	业务类型
-	@Length(max = 12,message="[业务种类]长度不符合规范")
-	@NotEmpty(message="[业务种类]不能为空")
+	//@Length(max = 12,message="[业务种类]长度不符合规范")
+	//@NotEmpty(message="[业务种类]不能为空")
 	private String	proprietary	;//	业务种类
 	@Length(max = 2,message="[业务种类]长度不符合规范")
 	private String status;

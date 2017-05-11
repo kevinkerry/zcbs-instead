@@ -50,8 +50,8 @@ public class BatchCollectAndPayFileContent implements Serializable {
 	@NotEmpty(message="[收款人名称]不能为空")
 	
 	private String creditorName;// 收款人名称
-	@Length(max = 5,message="[业务种类编码]长度不符合规范")
-	@NotEmpty(message="[业务种类编码]不能为空")
+	//@Length(max = 5,message="[业务种类编码]长度不符合规范")
+	//@NotEmpty(message="[业务种类编码]不能为空")
 	
 	private String proprietary;// 业务种类编码
 	@Length(max = 64)

@@ -31,8 +31,8 @@ public class EncryptData implements Serializable{
 	@Length(max = 64,message="[收款人名称]长度不符合规范")
 	@NotEmpty(message="[收款人名称]不能为空")
 	private String 	creditorName	;//	收款人名称
-	@Length(max = 5,message="[业务种类编码]长度不符合规范")
-	@NotEmpty(message="[业务种类编码]不能为空")
+	//@Length(max = 5,message="[业务种类编码]长度不符合规范")
+	//@NotEmpty(message="[业务种类编码]不能为空")
 	private String 	proprietary	;//	业务种类编码
 	@Length(max = 64,message="[摘要]长度不符合规范")
 	private String 	summary	;//	摘要

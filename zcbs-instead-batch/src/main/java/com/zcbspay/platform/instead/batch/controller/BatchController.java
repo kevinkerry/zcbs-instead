@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +24,14 @@ import com.zcbspay.platform.instead.common.bean.ResponseBaseBean;
 import com.zcbspay.platform.instead.common.enums.BatchTxnTypeEnum;
 import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
 import com.zcbspay.platform.instead.common.utils.AESUtil;
+import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.FlaterUtils;
+import com.zcbspay.platform.instead.common.utils.RiskInfoUtils;
 import com.zcbspay.platform.support.signaturn.bean.AdditBean;
 import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 import com.zcbspay.platform.support.signaturn.service.MessageDecodeService;
 import com.zcbspay.platform.support.signaturn.service.MessageEncryptService;
+import com.zlebank.zplatform.member.commons.utils.DateUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -49,7 +53,6 @@ public class BatchController {
 	@Autowired
 	private MessageEncryptService messageEncryptService;
 
-	private static final String COOP_INSTI_CODE = "300000000000004"; // test
 	private static final String MER_ID = "200000000000610";
 
 	/**
@@ -86,7 +89,7 @@ public class BatchController {
 			requestBean = collectAndPaySerivce.invoke(requestBean);
 
 			return messageEncryptService.encryptAndSigntrue(requestBean.getData(),
-					(AdditBean) JSONObject.toBean(JSONObject.fromObject(requestBean.getAddit()), AdditBean.class));
+					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.fail.getCode());
@@ -98,7 +101,7 @@ public class BatchController {
 	private MessageBean encrypt(ResponseBaseBean responseBaseBean,MessageBean messageBean){
 		try {
 			return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
-					(AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class));
+					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -142,31 +145,27 @@ public class BatchController {
 		realTimeCollectReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
 		return encryptData(realTimeCollectReqBean);
 	}
-	
-	
 	@ResponseBody
 	@RequestMapping("batchimportsubmit")
 	public MessageBean batchimportsubmit(BatchImportReqBean batchImportReqBean,
 			BatchImportFileContent batchCollectAndPayFileContent) {
 		List<BatchImportFileContent> list = new ArrayList<>();
+		batchImportReqBean.setBatchNo(DateUtil.getCurrentDate());
 		for (int i = 0; i < 10; i++) {
-			list.add(batchCollectAndPayFileContent);
+			BatchImportFileContent batchImportFileContent=new BatchImportFileContent();
+			batchImportFileContent=BeanCopyUtil.copyBean(BatchImportFileContent.class, batchCollectAndPayFileContent);
+			batchImportFileContent.setContractnum("00000"+i);
+			//batchCollectAndPayFileContent.setContractnum("00000");
+			list.add(batchImportFileContent);
 		}
 		batchImportReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
 		return encryptData(batchImportReqBean);
 	}
-	
-	
 	@ResponseBody
 	@RequestMapping("contractsubmit")
 	public MessageBean contractsubmit(ContractQueryReqBean contractQueryReqBean) {
 		return encryptData(contractQueryReqBean);
 	}
-	
-	
-	
-	
-
 	@ResponseBody
 	@RequestMapping("tradequery")
 	public MessageBean tradequery(BatchQueryReqBean realTimeQueryReqBean) {
@@ -175,16 +174,14 @@ public class BatchController {
 
 	private MessageBean encryptData(Object object) {
 		AdditBean additBean = new AdditBean();
-		additBean.setAccessType("0");
-		additBean.setCoopInstiId(COOP_INSTI_CODE);
+		additBean.setAccessType("1");
 		additBean.setMerId(MER_ID);
 		additBean.setEncryMethod("02");
 		try {
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
-			riskInfo.put("random", AESUtil.getAESKey());
-			riskInfo.put("os", "browser");
-			riskInfo.put("timestamp", System.currentTimeMillis());
-			riskInfo.put("deviceID", "000000");
+			riskInfo.put("random", RiskInfoUtils.randomInt(32));
+			riskInfo.put("timestamp", DateUtil.getCurrentDateTime());
+			riskInfo.put("deviceID", RiskInfoUtils.getMacAddress());
 			additBean.setRiskInfo(JSONObject.fromObject(riskInfo).toString());
 			return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(object).toString(), additBean);
 		} catch (Exception e) {
@@ -192,17 +189,23 @@ public class BatchController {
 			return null;
 		}
 	}
-
-	public static void main(String[] args) {
-		BatchCollectAndPayFileContent batchCollectAndPayFileContent = new BatchCollectAndPayFileContent();
-		batchCollectAndPayFileContent.setAmt("1");
-		batchCollectAndPayFileContent.setCreditorAccount("1");
-		List<BatchCollectAndPayFileContent> list = new ArrayList<>();
-		list.add(batchCollectAndPayFileContent);
-		list.add(batchCollectAndPayFileContent);
-		list.add(batchCollectAndPayFileContent);
-		list.add(batchCollectAndPayFileContent);
-		System.out.println(JSONArray.fromObject(list).toString());
+	
+	
+	private AdditBean prepareAdditbean(String merid){
+		AdditBean additBean = new AdditBean();
+		try {
+			additBean.setEncryKey(AESUtil.getAESKey());
+			additBean.setAccessType("1");
+			additBean.setMerId(merid);
+			additBean.setEncryMethod("01");
+			Map<String, Object> riskInfo = new TreeMap<String, Object>();
+			riskInfo.put("random", RiskInfoUtils.randomInt(32));
+			riskInfo.put("timestamp", DateUtil.getCurrentDateTime());
+			riskInfo.put("deviceID", RiskInfoUtils.getMacAddress());
+			additBean.setRiskInfo(JSONObject.fromObject(riskInfo).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return additBean;
 	}
-
 }

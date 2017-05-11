@@ -47,6 +47,17 @@ public class BatchCollectResBean extends BaseBean {
 	@NotEmpty(message="[应答信息]不能为空")
 	
 	private String respMsg;// 应答信息
+	
+	private String tn;
+	
+
+	public String getTn() {
+		return tn;
+	}
+
+	public void setTn(String tn) {
+		this.tn = tn;
+	}
 
 	public String getMerId() {
 		return merId;

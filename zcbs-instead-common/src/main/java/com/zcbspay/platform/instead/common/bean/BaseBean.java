@@ -31,7 +31,7 @@ public class BaseBean implements Serializable{
     @Length(message = "[产品类型]长度不符合规范",max=6)
     @NotEmpty(message = "[产品类型]不能为空")
     
-	private String bizType; // 产品类型
+	private String bizType="000003"; // 产品类型
 
 	public String getVersion() {
 		return version;

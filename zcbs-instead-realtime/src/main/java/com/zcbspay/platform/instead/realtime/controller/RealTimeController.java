@@ -13,6 +13,7 @@ import com.zcbspay.platform.instead.common.bean.ResponseBaseBean;
 import com.zcbspay.platform.instead.common.enums.RealTimeTxnTypeEnum;
 import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
 import com.zcbspay.platform.instead.common.utils.AESUtil;
+import com.zcbspay.platform.instead.common.utils.RiskInfoUtils;
 import com.zcbspay.platform.instead.realtime.bean.EncryptData;
 import com.zcbspay.platform.instead.realtime.bean.RealTimeCollectReqBean;
 import com.zcbspay.platform.instead.realtime.bean.RealTimePayReqBean;
@@ -24,6 +25,7 @@ import com.zcbspay.platform.support.signaturn.bean.AdditBean;
 import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 import com.zcbspay.platform.support.signaturn.service.MessageDecodeService;
 import com.zcbspay.platform.support.signaturn.service.MessageEncryptService;
+import com.zlebank.zplatform.member.commons.utils.DateUtil;
 
 import net.sf.json.JSONObject;
 
@@ -46,9 +48,7 @@ public class RealTimeController {
 	@Autowired
 	private EncryptAndDecryptService encryptAndDecryptService;
 
-	private static final String COOP_INSTI_CODE = "300000000000004"; // test
 	private static final String MER_ID = "200000000000610";
-
 	/**
 	 * 实时代收付接口
 	 * 
@@ -81,7 +81,7 @@ public class RealTimeController {
 			// 真正处理
 			requestBean = collectAndPaySerivce.invoke(requestBean);
 			return messageEncryptService.encryptAndSigntrue(requestBean.getData(),
-					(AdditBean) JSONObject.toBean(JSONObject.fromObject(requestBean.getAddit()), AdditBean.class));
+					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.fail.getCode());
@@ -93,7 +93,7 @@ public class RealTimeController {
 	private MessageBean encrypt(ResponseBaseBean responseBaseBean, MessageBean messageBean) {
 		try {
 			return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
-					(AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class));
+					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -138,23 +138,20 @@ public class RealTimeController {
 				.getBean(RealTimeTxnTypeEnum.getTxnTypeEnum(realTimeQueryReqBean.getTxnType()).getClassName());
 		MessageBean messageBean =new MessageBean();
 		messageBean.setData(JSONObject.fromObject(realTimeQueryReqBean).toString());
-//		collectAndPaySerivce.invoke(messageBean);
-
+		collectAndPaySerivce.invoke(messageBean);
 		return encryptData(realTimeQueryReqBean);
 	}
 
 	private MessageBean encryptData(Object object) {
 		AdditBean additBean = new AdditBean();
 		additBean.setAccessType("1");
-		additBean.setCoopInstiId(COOP_INSTI_CODE);
 		additBean.setMerId(MER_ID);
-		additBean.setEncryMethod("02");
+		additBean.setEncryMethod("01");
 		try {
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
-			riskInfo.put("random", AESUtil.getAESKey());
-			riskInfo.put("os", "browser");
-			riskInfo.put("timestamp", System.currentTimeMillis());
-			riskInfo.put("deviceID", "000000");
+			riskInfo.put("random", RiskInfoUtils.randomInt(32));
+			riskInfo.put("timestamp", DateUtil.getCurrentDateTime());
+			riskInfo.put("deviceID", RiskInfoUtils.getMacAddress());
 			additBean.setRiskInfo(JSONObject.fromObject(riskInfo).toString());
 			return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(object).toString(), additBean);
 		} catch (Exception e) {
@@ -162,4 +159,24 @@ public class RealTimeController {
 			return null;
 		}
 	}
+	private AdditBean prepareAdditbean(String merid){
+		AdditBean additBean = new AdditBean();
+		try {
+			additBean.setEncryKey(AESUtil.getAESKey());
+			additBean.setAccessType("1");
+			additBean.setMerId(merid);
+			additBean.setEncryMethod("01");
+			Map<String, Object> riskInfo = new TreeMap<String, Object>();
+			riskInfo.put("random", RiskInfoUtils.randomInt(32));
+			riskInfo.put("timestamp", DateUtil.getCurrentDateTime());
+			riskInfo.put("deviceID", RiskInfoUtils.getMacAddress());
+			additBean.setRiskInfo(JSONObject.fromObject(riskInfo).toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return additBean;
+		
+	}
+	
 }
