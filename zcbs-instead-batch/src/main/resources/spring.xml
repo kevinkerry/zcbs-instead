@@ -22,4 +22,14 @@
         </property>  
     </bean>
     <bean id="SpringContextHelper" class="com.zcbspay.platform.instead.batch.helper.SpringContextHelper"/> 
+    <bean id="logHelper" class="com.zcbspay.platform.instead.common.utils.LogHelper"/>
+	<aop:config>
+	    <aop:aspect ref="logHelper">
+	        <aop:pointcut id="pointcut" expression="execution(* com.zcbspay.platform.instead..*.*(..))"/>
+	        <aop:before method="before"  pointcut-ref="pointcut" />
+	        <aop:after method="after" pointcut-ref="pointcut" />
+	        <aop:around method="around"  pointcut-ref="pointcut" />
+	        <aop:after-throwing method="throwException" pointcut-ref="pointcut" throwing="ex" />
+	    </aop:aspect>
+	</aop:config>
 </beans>

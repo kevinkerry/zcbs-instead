@@ -2,6 +2,8 @@ package com.zcbspay.platform.instead.batch.bean;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Pattern;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -23,6 +25,7 @@ public class ContractQueryFileContent implements Serializable  {
 	private String	contractnum	;//	合同编号
 	@Length(max = 4,message="[合同类型]长度不符合规范")
 	@NotEmpty(message="[合同类型]不能为空")
+	@Pattern(regexp="^(CT0)([0-4])$",message="[合同类型]不符合规范")
 	private String	contracttype	;//	合同类型
 	@Length(max = 60,message="[付款人名称]长度不符合规范")
 	@NotEmpty(message="[付款人名称]不能为空")
@@ -78,6 +81,7 @@ public class ContractQueryFileContent implements Serializable  {
 	//@NotEmpty(message="[业务种类]不能为空")
 	private String	proprietary	;//	业务种类
 	@Length(max = 2,message="[业务种类]长度不符合规范")
+	@NotEmpty(message="[业务种类]不能为空")
 	private String status;
 	
 	
