@@ -9,21 +9,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zcbspay.platform.business.concentrate.batch.service.BatchPayment;
 import com.zcbspay.platform.business.concentrate.bean.BatchPaymentBean;
 import com.zcbspay.platform.business.concentrate.bean.FileContentBean;
 import com.zcbspay.platform.business.concentrate.bean.ResultBean;
 import com.zcbspay.platform.instead.batch.bean.BatchCollectAndPayFileContent;
 import com.zcbspay.platform.instead.batch.bean.BatchPayReqBean;
 import com.zcbspay.platform.instead.batch.bean.BatchPayResBean;
-import com.zcbspay.platform.instead.batch.exception.DataErrorException;
 import com.zcbspay.platform.instead.batch.service.CollectAndPayService;
+import com.zcbspay.platform.instead.common.bean.MessageBean;
+import com.zcbspay.platform.instead.common.bean.UrlBean;
+import com.zcbspay.platform.instead.common.constant.Constants;
 import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
+import com.zcbspay.platform.instead.common.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.ExceptionUtil;
 import com.zcbspay.platform.instead.common.utils.FlaterUtils;
+import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
+import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
-import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -36,8 +39,11 @@ import net.sf.json.JSONObject;
 @Service("batchPayService")
 public class BatchPayServiceImpl implements CollectAndPayService{
 	private static final Logger logger = LoggerFactory.getLogger(BatchPayServiceImpl.class); 
+//	@Autowired
+//	private BatchPayment batchPayment;
+	
 	@Autowired
-	private BatchPayment batchPayment;
+	private UrlBean urlBean;
 	
 	@SuppressWarnings({ "unchecked", "deprecation", "static-access" })
 	@Override
@@ -59,8 +65,19 @@ public class BatchPayServiceImpl implements CollectAndPayService{
 					fileContentBeans.add(fileContentBean);
 				}
 			}
-			batchPaymentBean.setFileContent(fileContentBeans);;
-			ResultBean resultBean =batchPayment.pay(batchPaymentBean);
+			batchPaymentBean.setFileContent(fileContentBeans);
+
+			HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(batchPaymentBean).toString());
+			List<HttpRequestParam> list = new ArrayList<>();
+			list.add(httpRequestParam);
+			
+			String url = urlBean.getBatchPayUrl();
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
+			//ResultBean resultBean =batchPayment.pay(batchPaymentBean);
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {

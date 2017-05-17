@@ -1,4 +1,4 @@
-package com.zcbspay.platform.instead.batch.exception;
+package com.zcbspay.platform.instead.common.exception;
 
 public class DataErrorException extends RuntimeException{
 

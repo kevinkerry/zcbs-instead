@@ -1,5 +1,8 @@
 package com.zcbspay.platform.instead.realtime.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,19 +11,22 @@ import org.springframework.stereotype.Service;
 
 import com.zcbspay.platform.business.concentrate.bean.RealtimeCollectionBean;
 import com.zcbspay.platform.business.concentrate.bean.ResultBean;
-import com.zcbspay.platform.business.concentrate.realtime.service.RealtimeCollection;
-import com.zcbspay.platform.instead.batch.exception.DataErrorException;
+import com.zcbspay.platform.instead.common.bean.AdditBean;
+import com.zcbspay.platform.instead.common.bean.MessageBean;
+import com.zcbspay.platform.instead.common.bean.UrlBean;
+import com.zcbspay.platform.instead.common.constant.Constants;
 import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
+import com.zcbspay.platform.instead.common.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.ExceptionUtil;
+import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
+import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
 import com.zcbspay.platform.instead.realtime.bean.EncryptData;
 import com.zcbspay.platform.instead.realtime.bean.RealTimeCollectReqBean;
 import com.zcbspay.platform.instead.realtime.bean.RealTimeCollectResBean;
 import com.zcbspay.platform.instead.realtime.service.CollectAndPayService;
 import com.zcbspay.platform.instead.realtime.service.EncryptAndDecryptService;
-import com.zcbspay.platform.support.signaturn.bean.AdditBean;
-import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 
 import net.sf.json.JSONObject;
 @Service("realTimeCollectService")
@@ -28,8 +34,10 @@ public class RealTimeCollectServiceImpl implements CollectAndPayService{
 	private static final Logger logger = LoggerFactory.getLogger(RealTimeCollectServiceImpl.class); 
 	@Autowired
 	private EncryptAndDecryptService encryptAndDecryptService;
+	//@Autowired
+	//private RealtimeCollection realtimeCollection;
 	@Autowired
-	private RealtimeCollection realtimeCollection;
+	private UrlBean urlBean;
 
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
@@ -55,7 +63,18 @@ public class RealTimeCollectServiceImpl implements CollectAndPayService{
 			RealtimeCollectionBean realtimeCollectionBean=new RealtimeCollectionBean();
 			BeanCopyUtil.copyBean(realtimeCollectionBean,reqBean);
 			BeanCopyUtil.copyBean(realtimeCollectionBean,encryptData);
-			ResultBean resultBean= realtimeCollection.pay(realtimeCollectionBean);
+			//TODO:
+			HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(realtimeCollectionBean).toString());
+			List<HttpRequestParam> list = new ArrayList<>();
+			list.add(httpRequestParam);
+			
+			String url = urlBean.getSingleCollectUrl();
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
+			//ResultBean resultBean= realtimeCollection.pay(realtimeCollectionBean);
 			
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());

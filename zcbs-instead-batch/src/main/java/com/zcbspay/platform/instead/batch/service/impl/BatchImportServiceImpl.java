@@ -10,18 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zcbspay.platform.business.merch.bean.ResultBean;
-import com.zcbspay.platform.business.merch.service.ContractBizService;
 import com.zcbspay.platform.instead.batch.bean.BatchImportFileContent;
 import com.zcbspay.platform.instead.batch.bean.BatchImportReqBean;
 import com.zcbspay.platform.instead.batch.bean.BatchImportResBean;
-import com.zcbspay.platform.instead.batch.exception.DataErrorException;
 import com.zcbspay.platform.instead.batch.service.CollectAndPayService;
+import com.zcbspay.platform.instead.common.bean.MessageBean;
+import com.zcbspay.platform.instead.common.bean.UrlBean;
+import com.zcbspay.platform.instead.common.constant.Constants;
 import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
+import com.zcbspay.platform.instead.common.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.ExceptionUtil;
 import com.zcbspay.platform.instead.common.utils.FlaterUtils;
+import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
+import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
-import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -34,8 +37,11 @@ import net.sf.json.JSONObject;
 @Service("batchImportService")
 public class BatchImportServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(BatchImportServiceImpl.class);
+//	@Autowired
+//	private ContractBizService contractService;
+	
 	@Autowired
-	private ContractBizService contractService;
+	private UrlBean urlBean;
 
 	@SuppressWarnings("all")
 	@Override
@@ -59,7 +65,18 @@ public class BatchImportServiceImpl implements CollectAndPayService {
 			com.zcbspay.platform.business.merch.bean.BatchImportReqBean batch=new com.zcbspay.platform.business.merch.bean.BatchImportReqBean();
 			batch=BeanCopyUtil.copyBean(com.zcbspay.platform.business.merch.bean.BatchImportReqBean.class, batchImportResBean);
 			batch.setFileContents(batchImportFileContent);
-			ResultBean resultBean =contractService.importBatchContract(batch);
+
+			HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(batch).toString());
+			List<HttpRequestParam> list = new ArrayList<>();
+			list.add(httpRequestParam);
+			
+			String url = urlBean.getBatchImportUrl();
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
+			//ResultBean resultBean =contractService.importBatchContract(batch);
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {

@@ -7,8 +7,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import com.zcbspay.platform.instead.batch.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.bean.ValidateResultBean;
+import com.zcbspay.platform.instead.common.exception.DataErrorException;
 
 public class ValidateLocator {
 

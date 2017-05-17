@@ -32,4 +32,15 @@
 	        <aop:after-throwing method="throwException" pointcut-ref="pointcut" throwing="ex" />
 	    </aop:aspect>
 	</aop:config>
+	
+	<bean id="urlBean" class="com.zcbspay.platform.instead.common.bean.UrlBean"> <!-- 这些配置Spring在启动时会去conn.properties中找 -->  
+	    <property name="batchCollectUrl" value="${localpath}${batch.collect}" />
+	    <property name="batchPayUrl" value="${localpath}${batch.pay}" />  
+	    <property name="batchQueryCollectUrl" value="${localpath}${batch.queryCollect}" /> 
+	    <property name="batchQueryPayUrl" value="${localpath}${batch.queryPay}" />   
+	    <property name="batchImportUrl" value="${localpath}${batch.import}" />  
+	    <property name="batchContractUrl" value="${localpath}${batch.contract}" />
+	    <property name="encryptUrl" value="${localpath}${batch.encrypt}" />
+	    <property name="decodeUrl" value="${localpath}${batch.decode}" />
+	 </bean>
 </beans>

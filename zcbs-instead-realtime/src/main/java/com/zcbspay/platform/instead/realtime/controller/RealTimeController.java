@@ -1,5 +1,7 @@
 package com.zcbspay.platform.instead.realtime.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -8,11 +10,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zcbspay.platform.instead.common.bean.AdditBean;
 import com.zcbspay.platform.instead.common.bean.BaseBean;
+import com.zcbspay.platform.instead.common.bean.MessageBean;
 import com.zcbspay.platform.instead.common.bean.ResponseBaseBean;
+import com.zcbspay.platform.instead.common.bean.UrlBean;
+import com.zcbspay.platform.instead.common.constant.Constants;
 import com.zcbspay.platform.instead.common.enums.RealTimeTxnTypeEnum;
 import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
 import com.zcbspay.platform.instead.common.utils.AESUtil;
+import com.zcbspay.platform.instead.common.utils.DateUtils;
+import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
+import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.RiskInfoUtils;
 import com.zcbspay.platform.instead.realtime.bean.EncryptData;
 import com.zcbspay.platform.instead.realtime.bean.RealTimeCollectReqBean;
@@ -21,11 +30,6 @@ import com.zcbspay.platform.instead.realtime.bean.RealTimeQueryReqBean;
 import com.zcbspay.platform.instead.realtime.helper.SpringContextHelper;
 import com.zcbspay.platform.instead.realtime.service.CollectAndPayService;
 import com.zcbspay.platform.instead.realtime.service.EncryptAndDecryptService;
-import com.zcbspay.platform.support.signaturn.bean.AdditBean;
-import com.zcbspay.platform.support.signaturn.bean.MessageBean;
-import com.zcbspay.platform.support.signaturn.service.MessageDecodeService;
-import com.zcbspay.platform.support.signaturn.service.MessageEncryptService;
-import com.zlebank.zplatform.member.commons.utils.DateUtil;
 
 import net.sf.json.JSONObject;
 
@@ -40,11 +44,14 @@ import net.sf.json.JSONObject;
 @RequestMapping("/realtime/")
 public class RealTimeController {
 	private CollectAndPayService collectAndPaySerivce;
-	@Autowired
-	private MessageDecodeService messageDecodeService;
-	@Autowired
-	private MessageEncryptService messageEncryptService;
+	//@Autowired
+	//private MessageDecodeService messageDecodeService;
+	//@Autowired
+	//private MessageEncryptService messageEncryptService;
 
+	@Autowired
+	private UrlBean urlBean;
+	
 	@Autowired
 	private EncryptAndDecryptService encryptAndDecryptService;
 
@@ -64,7 +71,16 @@ public class RealTimeController {
 		ResponseBaseBean responseBaseBean = new ResponseBaseBean();
 		try {
 			// 验签,解密
-			requestBean = messageDecodeService.decodeAndVerify(messageBean);
+			//requestBean = messageDecodeService.decodeAndVerify(messageBean);
+			HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(messageBean).toString());
+			List<HttpRequestParam> list = new ArrayList<>();
+			list.add(httpRequestParam);
+			String url =urlBean.getDecodeUrl();//"http://localhost:9911/fe/sign/decode";
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.decodeError.getCode());
@@ -80,8 +96,20 @@ public class RealTimeController {
 					.getBean(RealTimeTxnTypeEnum.getTxnTypeEnum(baseBean.getTxnType()).getClassName());
 			// 真正处理
 			requestBean = collectAndPaySerivce.invoke(requestBean);
-			return messageEncryptService.encryptAndSigntrue(requestBean.getData(),
-					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));
+			HttpRequestParam httpRequestParam1= new HttpRequestParam("enData",requestBean.getData());
+			HttpRequestParam httpRequestParam2= new HttpRequestParam("additBean",JSONObject.fromObject(prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId())).toString());
+			List<HttpRequestParam> listen = new ArrayList<>();
+			listen.add(httpRequestParam1);
+			listen.add(httpRequestParam2);
+			String url =urlBean.getEncryptUrl();
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
+			return requestBean;
+			/*return messageEncryptService.encryptAndSigntrue(requestBean.getData(),
+					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.fail.getCode());
@@ -91,9 +119,22 @@ public class RealTimeController {
 	}
 
 	private MessageBean encrypt(ResponseBaseBean responseBaseBean, MessageBean messageBean) {
+		MessageBean requestBean=null;
 		try {
-			return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
-					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));
+			HttpRequestParam httpRequestParam1= new HttpRequestParam("enData",JSONObject.fromObject(responseBaseBean).toString());
+			HttpRequestParam httpRequestParam2= new HttpRequestParam("additBean",JSONObject.fromObject(prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId())).toString());
+			List<HttpRequestParam> listen = new ArrayList<>();
+			listen.add(httpRequestParam1);
+			listen.add(httpRequestParam2);
+			String url =urlBean.getEncryptUrl();
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
+			return requestBean;
+			/*return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
+					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -132,7 +173,6 @@ public class RealTimeController {
 	@ResponseBody
 	@RequestMapping("tradequery")
 	public MessageBean tradequery(RealTimeQueryReqBean realTimeQueryReqBean) {
-
 		// 确定处理类
 		collectAndPaySerivce = (CollectAndPayService) SpringContextHelper
 				.getBean(RealTimeTxnTypeEnum.getTxnTypeEnum(realTimeQueryReqBean.getTxnType()).getClassName());
@@ -143,6 +183,7 @@ public class RealTimeController {
 	}
 
 	private MessageBean encryptData(Object object) {
+		MessageBean requestBean=null;
 		AdditBean additBean = new AdditBean();
 		additBean.setAccessType("1");
 		additBean.setMerId(MER_ID);
@@ -150,10 +191,24 @@ public class RealTimeController {
 		try {
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
 			riskInfo.put("random", RiskInfoUtils.randomInt(32));
-			riskInfo.put("timestamp", DateUtil.getCurrentDateTime());
+			riskInfo.put("timestamp", DateUtils.geCurrentDateTimeStr());
 			riskInfo.put("deviceID", RiskInfoUtils.getMacAddress());
 			additBean.setRiskInfo(JSONObject.fromObject(riskInfo).toString());
-			return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(object).toString(), additBean);
+			
+			HttpRequestParam httpRequestParam1= new HttpRequestParam("enData",JSONObject.fromObject(object).toString());
+			HttpRequestParam httpRequestParam2= new HttpRequestParam("additBean",JSONObject.fromObject(additBean).toString());
+			List<HttpRequestParam> listen = new ArrayList<>();
+			listen.add(httpRequestParam1);
+			listen.add(httpRequestParam2);
+			String url =urlBean.getEncryptUrl();
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
+			return requestBean;
+			
+			/*return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(object).toString(), additBean);*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -168,7 +223,7 @@ public class RealTimeController {
 			additBean.setEncryMethod("01");
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
 			riskInfo.put("random", RiskInfoUtils.randomInt(32));
-			riskInfo.put("timestamp", DateUtil.getCurrentDateTime());
+			riskInfo.put("timestamp", DateUtils.geCurrentDateTimeStr());
 			riskInfo.put("deviceID", RiskInfoUtils.getMacAddress());
 			additBean.setRiskInfo(JSONObject.fromObject(riskInfo).toString());
 		} catch (Exception e) {
@@ -178,5 +233,4 @@ public class RealTimeController {
 		return additBean;
 		
 	}
-	
 }

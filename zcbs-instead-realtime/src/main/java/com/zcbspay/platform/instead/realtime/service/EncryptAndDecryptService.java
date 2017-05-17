@@ -1,6 +1,6 @@
 package com.zcbspay.platform.instead.realtime.service;
 
-import com.zcbspay.platform.support.signaturn.bean.AdditBean;
+import com.zcbspay.platform.instead.common.bean.AdditBean;
 
 public interface EncryptAndDecryptService {
 	

@@ -1,7 +1,9 @@
 package com.zcbspay.platform.instead.realtime.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,17 +12,20 @@ import org.springframework.stereotype.Service;
 
 import com.zcbspay.platform.business.order.bean.OrderResultBean;
 import com.zcbspay.platform.business.order.bean.ResultBean;
-import com.zcbspay.platform.business.order.service.OrderQueryService;
-import com.zcbspay.platform.instead.batch.exception.DataErrorException;
+import com.zcbspay.platform.instead.common.bean.MessageBean;
+import com.zcbspay.platform.instead.common.bean.UrlBean;
+import com.zcbspay.platform.instead.common.constant.Constants;
 import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
+import com.zcbspay.platform.instead.common.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.ExceptionUtil;
+import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
+import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
 import com.zcbspay.platform.instead.realtime.bean.RealTimeQueryReqBean;
 import com.zcbspay.platform.instead.realtime.bean.RealTimeQueryResBean;
 import com.zcbspay.platform.instead.realtime.bean.Reserved;
 import com.zcbspay.platform.instead.realtime.service.CollectAndPayService;
-import com.zcbspay.platform.support.signaturn.bean.MessageBean;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -28,9 +33,12 @@ import net.sf.json.JSONObject;
 @Service("realTimeQueryService")
 public class RealTimeQueryServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(RealTimeQueryServiceImpl.class); 
+//	@Autowired
+//	private OrderQueryService realTimeTradeQuery;
+	
 	@Autowired
-	private OrderQueryService realTimeTradeQuery;
-
+	private UrlBean urlBean;
+	
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		RealTimeQueryResBean realTimeQueryResBean=new RealTimeQueryResBean();
@@ -41,12 +49,28 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 			ResultBean resultBean = null;
 			realTimeQueryResBean = BeanCopyUtil.copyBean(RealTimeQueryResBean.class, reqBean);
 			ValidateLocator.validateBeans(reqBean);
+			//TODO:
+			String url =null;// 
+			
 			
 			if ("01".equals(reqBean.getOrderType())) {// 实时代收
-				resultBean = realTimeTradeQuery.queryConcentrateCollectionOrder(reqBean.getTn());
+				url=urlBean.getSingleQueryCollectUrl();
+				//resultBean = realTimeTradeQuery.queryConcentrateCollectionOrder(reqBean.getTn());
 			} else if ("02".equals(reqBean.getOrderType())) {// 实时代付
-				resultBean = realTimeTradeQuery.queryConcentratePaymentOrder(reqBean.getTn());
+				url=urlBean.getSinglePayUrl();
+				//resultBean = realTimeTradeQuery.queryConcentratePaymentOrder(reqBean.getTn());
 			}
+			
+			HttpRequestParam httpRequestParam= new HttpRequestParam("data",reqBean.getTn());
+			List<HttpRequestParam> list = new ArrayList<>();
+			list.add(httpRequestParam);
+			
+			HttpUtils httpUtils = new HttpUtils();
+			httpUtils.openConnection();
+			String responseContent = httpUtils.executeHttpGet(url,list,Constants.Encoding.UTF_8);
+			httpUtils.closeConnection();
+			resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
+			
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
@@ -59,6 +83,9 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 			} else {
 				realTimeQueryResBean.setRespCode(ResponseTypeEnum.success.getCode());
 				realTimeQueryResBean.setRespMsg(ResponseTypeEnum.success.getMessage());
+				Map<String, Class> mapClass=new HashMap<>();
+				mapClass.put("resultObj", OrderResultBean.class);
+				resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class,mapClass);
 				OrderResultBean orderResultBean = (OrderResultBean) resultBean.getResultObj();
 				BeanCopyUtil.copyBean(realTimeQueryResBean, orderResultBean);
 				Reserved reserved=BeanCopyUtil.copyBean(Reserved.class, orderResultBean);
