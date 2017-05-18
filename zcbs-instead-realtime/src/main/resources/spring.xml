@@ -34,12 +34,12 @@
 	    </aop:aspect>
 	</aop:config>
 	<bean id="urlBean" class="com.zcbspay.platform.instead.common.bean.UrlBean"> <!-- 这些配置Spring在启动时会去conn.properties中找 -->  
-	    <property name="singleCollectUrl" value="${localpath}${single.collect}" />  
-	    <property name="singlePayUrl" value="${localpath}${single.pay}" />  
-	    <property name="singleQueryCollectUrl" value="${localpath}${single.queryCollect}" />  
-	    <property name="singleQueryPayUrl" value="${localpath}${single.queryPay}" />  
-	    <property name="encryptUrl" value="${localpath}${single.encrypt}" />
-	    <property name="decodeUrl" value="${localpath}${single.decode}" />
-	    <property name="mkUrl" value="${localpath}${single.mk}" />
+	    <property name="singleCollectUrl" value="${basepath}${single.collect}" />  
+	    <property name="singlePayUrl" value="${basepath}${single.pay}" />  
+	    <property name="singleQueryCollectUrl" value="${basepath}${single.queryCollect}" />  
+	    <property name="singleQueryPayUrl" value="${basepath}${single.queryPay}" />  
+	    <property name="encryptUrl" value="${basepath}${single.encrypt}" />
+	    <property name="decodeUrl" value="${basepath}${single.decode}" />
+	    <property name="mkUrl" value="${basepath}${single.mk}" />
 	 </bean>
 </beans>

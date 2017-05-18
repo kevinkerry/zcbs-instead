@@ -34,13 +34,13 @@
 	</aop:config>
 	
 	<bean id="urlBean" class="com.zcbspay.platform.instead.common.bean.UrlBean"> <!-- 这些配置Spring在启动时会去conn.properties中找 -->  
-	    <property name="batchCollectUrl" value="${localpath}${batch.collect}" />
-	    <property name="batchPayUrl" value="${localpath}${batch.pay}" />  
-	    <property name="batchQueryCollectUrl" value="${localpath}${batch.queryCollect}" /> 
-	    <property name="batchQueryPayUrl" value="${localpath}${batch.queryPay}" />   
-	    <property name="batchImportUrl" value="${localpath}${batch.import}" />  
-	    <property name="batchContractUrl" value="${localpath}${batch.contract}" />
-	    <property name="encryptUrl" value="${localpath}${batch.encrypt}" />
-	    <property name="decodeUrl" value="${localpath}${batch.decode}" />
+	    <property name="batchCollectUrl" value="${basepath}${batch.collect}" />
+	    <property name="batchPayUrl" value="${basepath}${batch.pay}" />  
+	    <property name="batchQueryCollectUrl" value="${basepath}${batch.queryCollect}" /> 
+	    <property name="batchQueryPayUrl" value="${basepath}${batch.queryPay}" />   
+	    <property name="batchImportUrl" value="${basepath}${batch.import}" />  
+	    <property name="batchContractUrl" value="${basepath}${batch.contract}" />
+	    <property name="encryptUrl" value="${basepath}${batch.encrypt}" />
+	    <property name="decodeUrl" value="${basepath}${batch.decode}" />
 	 </bean>
 </beans>
