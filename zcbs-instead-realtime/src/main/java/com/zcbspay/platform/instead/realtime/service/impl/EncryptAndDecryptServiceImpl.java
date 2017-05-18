@@ -43,8 +43,6 @@ public class EncryptAndDecryptServiceImpl implements EncryptAndDecryptService {
 		return rsa.decrypt(data);
 	}
 
-	
-
 	@Override
 	public String encrypt(AdditBean additBean, String data) {
 		RSAHelper rsa = null;
@@ -58,24 +56,25 @@ public class EncryptAndDecryptServiceImpl implements EncryptAndDecryptService {
 	}
 	@SuppressWarnings("unchecked")
 	private RSAHelper getRsa(AdditBean additBean) {
-		RSAHelper rsa;
+		RSAHelper rsa=null;
 		HttpRequestParam httpRequestParam= new HttpRequestParam("data",additBean.getMerId());
 		List<HttpRequestParam> list = new ArrayList<>();
 		list.add(httpRequestParam);
 		
 		String url = urlBean.getMkUrl();
 		HttpUtils httpUtils = new HttpUtils();
-		httpUtils.openConnection();
 		String responseContent =null;
 		try {
+			httpUtils.openConnection();
 			responseContent= httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
+			Map<String, Object> re=(Map<String, Object>) JSONObject.toBean(JSONObject.fromObject(responseContent),Map.class);
+			
+			rsa = new RSAHelper(re.get("localpub").toString(), re.get("localpri").toString());
 		} catch (HttpException e) {
 			e.printStackTrace();
+		}finally{
+			httpUtils.closeConnection();
 		}
-		httpUtils.closeConnection();
-		Map<String, Object> re=(Map<String, Object>) JSONObject.toBean(JSONObject.fromObject(responseContent),Map.class);
-		
-		rsa = new RSAHelper(re.get("localpub").toString(), re.get("localpri").toString());
 		return rsa;
 	}
 }

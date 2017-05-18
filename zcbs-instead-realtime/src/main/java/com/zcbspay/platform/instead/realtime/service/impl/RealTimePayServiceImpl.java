@@ -42,6 +42,7 @@ public class RealTimePayServiceImpl implements CollectAndPayService{
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		RealTimePayResBean realTimePayResBean=new RealTimePayResBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			RealTimePayReqBean reqBean=(RealTimePayReqBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getData()),RealTimePayReqBean.class);
 			realTimePayResBean=BeanCopyUtil.copyBean(RealTimePayResBean.class,reqBean);
@@ -60,10 +61,10 @@ public class RealTimePayServiceImpl implements CollectAndPayService{
 			List<HttpRequestParam> list = new ArrayList<>();
 			list.add(httpRequestParam);
 			String url = urlBean.getSinglePayUrl();
-			HttpUtils httpUtils = new HttpUtils();
+			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean= realtimePayment.pay(realtimePaymentBean);
 			
@@ -91,6 +92,8 @@ public class RealTimePayServiceImpl implements CollectAndPayService{
 			logger.error(ExceptionUtil.getStackTrace(e));
 			realTimePayResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			realTimePayResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+		}finally {
+			httpUtils.closeConnection();
 		}
 		messageBean.setData(JSONObject.fromObject(realTimePayResBean).toString());
 		return messageBean;

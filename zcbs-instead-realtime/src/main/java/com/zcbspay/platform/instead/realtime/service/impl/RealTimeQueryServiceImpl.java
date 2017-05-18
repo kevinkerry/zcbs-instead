@@ -42,6 +42,7 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		RealTimeQueryResBean realTimeQueryResBean=new RealTimeQueryResBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			RealTimeQueryReqBean reqBean = (RealTimeQueryReqBean) JSONObject
 					.toBean(JSONObject.fromObject(messageBean.getData()), RealTimeQueryReqBean.class);
@@ -49,26 +50,18 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 			ResultBean resultBean = null;
 			realTimeQueryResBean = BeanCopyUtil.copyBean(RealTimeQueryResBean.class, reqBean);
 			ValidateLocator.validateBeans(reqBean);
-			//TODO:
 			String url =null;// 
-			
 			
 			if ("01".equals(reqBean.getOrderType())) {// 实时代收
 				url=urlBean.getSingleQueryCollectUrl();
-				//resultBean = realTimeTradeQuery.queryConcentrateCollectionOrder(reqBean.getTn());
 			} else if ("02".equals(reqBean.getOrderType())) {// 实时代付
 				url=urlBean.getSinglePayUrl();
-				//resultBean = realTimeTradeQuery.queryConcentratePaymentOrder(reqBean.getTn());
 			}
 			
-			HttpRequestParam httpRequestParam= new HttpRequestParam("data",reqBean.getTn());
-			List<HttpRequestParam> list = new ArrayList<>();
-			list.add(httpRequestParam);
 			
-			HttpUtils httpUtils = new HttpUtils();
 			httpUtils.openConnection();
-			String responseContent = httpUtils.executeHttpGet(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			String responseContent = httpUtils.executeHttpGet(url+"/"+reqBean.getTn(),Constants.Encoding.UTF_8);
+			
 			resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			
 			if (!resultBean.isResultBool()) {
@@ -101,29 +94,11 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 			logger.error(ExceptionUtil.getStackTrace(e));
 			realTimeQueryResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			realTimeQueryResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+		}finally{
+			httpUtils.closeConnection();
 		}
 		
 		messageBean.setData(JSONObject.fromObject(realTimeQueryResBean).toString());
 		return messageBean;
 	}
-	
-	public static void main(String[] args) {
-		List<RealTimeQueryReqBean> list=new ArrayList<>();
-		RealTimeQueryReqBean realTimeQueryReqBean1=new RealTimeQueryReqBean();
-		realTimeQueryReqBean1.setBizType("bizType1");
-		realTimeQueryReqBean1.setEncoding("encoding1");
-		
-		RealTimeQueryReqBean realTimeQueryReqBean2=new RealTimeQueryReqBean();
-		realTimeQueryReqBean2.setBizType("bizType2");
-		realTimeQueryReqBean2.setEncoding("encoding2");
-		
-		list.add(realTimeQueryReqBean1);
-		list.add(realTimeQueryReqBean2);
-		
-		String reString= JSONArray.fromObject(list).toString();
-		System.out.println("array:"+reString);
-		String mtring=JSONObject.fromObject(list).toString();
-		System.out.println("array:"+mtring);
-	}
-
 }

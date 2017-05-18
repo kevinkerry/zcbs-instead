@@ -48,6 +48,7 @@ public class BatchPayServiceImpl implements CollectAndPayService{
 	@SuppressWarnings({ "unchecked", "deprecation", "static-access" })
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
+		HttpUtils httpUtils = new HttpUtils();
 		BatchPayResBean batchPayResBean=new BatchPayResBean();
 		try {
 			BatchPayReqBean reqBean=(BatchPayReqBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getData()),BatchPayReqBean.class);
@@ -72,10 +73,10 @@ public class BatchPayServiceImpl implements CollectAndPayService{
 			list.add(httpRequestParam);
 			
 			String url = urlBean.getBatchPayUrl();
-			HttpUtils httpUtils = new HttpUtils();
+			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean =batchPayment.pay(batchPaymentBean);
 			if (!resultBean.isResultBool()) {
@@ -102,6 +103,8 @@ public class BatchPayServiceImpl implements CollectAndPayService{
 			logger.error(ExceptionUtil.getStackTrace(e));
 			batchPayResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			batchPayResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+		}finally {
+			httpUtils.closeConnection();
 		}
 		
 		messageBean.setData(JSONObject.fromObject(batchPayResBean).toString());

@@ -47,6 +47,7 @@ public class BatchImportServiceImpl implements CollectAndPayService {
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		BatchImportResBean batchImportResBean=new BatchImportResBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			BatchImportReqBean reqBean=(BatchImportReqBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getData()),BatchImportReqBean.class);
 			batchImportResBean=BeanCopyUtil.copyBean(BatchImportResBean.class, reqBean);
@@ -71,10 +72,10 @@ public class BatchImportServiceImpl implements CollectAndPayService {
 			list.add(httpRequestParam);
 			
 			String url = urlBean.getBatchImportUrl();
-			HttpUtils httpUtils = new HttpUtils();
+			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean =contractService.importBatchContract(batch);
 			if (!resultBean.isResultBool()) {
@@ -100,8 +101,9 @@ public class BatchImportServiceImpl implements CollectAndPayService {
 			logger.error(ExceptionUtil.getStackTrace(e));
 			batchImportResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			batchImportResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+		}finally{
+			httpUtils.closeConnection();
 		}
-		
 		messageBean.setData(JSONObject.fromObject(batchImportResBean).toString());
 		return messageBean;
 	}

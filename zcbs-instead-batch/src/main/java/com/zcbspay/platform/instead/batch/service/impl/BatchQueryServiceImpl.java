@@ -47,6 +47,7 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		BatchQueryResBean batchQueryResBean=new BatchQueryResBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			BatchQueryReqBean reqBean = (BatchQueryReqBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getData()),
 					BatchQueryReqBean.class);
@@ -60,21 +61,11 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 				url=urlBean.getBatchQueryPayUrl();
 			}
 			
-			HttpRequestParam httpRequestParam= new HttpRequestParam("merid",reqBean.getMerId());
-			HttpRequestParam httpRequestParam1= new HttpRequestParam("batchno",reqBean.getBatchNo());
-			HttpRequestParam httpRequestParam2= new HttpRequestParam("txndate",reqBean.getTxnDate());
-			List<HttpRequestParam> list = new ArrayList<>();
-			list.add(httpRequestParam);
-			list.add(httpRequestParam1);
-			list.add(httpRequestParam2);
 			
-			HttpUtils httpUtils = new HttpUtils();
 			httpUtils.openConnection();
-			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			String responseContent = httpUtils.executeHttpGet(url+"/"+reqBean.getMerId()+"/"+reqBean.getBatchNo()+"/"+reqBean.getTxnDate(),Constants.Encoding.UTF_8);
 			resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//resultBean = batchTradeQuery.queryConcentrateCollectionBatch(reqBean.getMerId(), reqBean.getBatchNo(),reqBean.getTxnDate());
-			
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
@@ -107,6 +98,8 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 			logger.error(ExceptionUtil.getStackTrace(e));
 			batchQueryResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			batchQueryResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+		}finally {
+			httpUtils.closeConnection();
 		}
 		messageBean.setData(JSONObject.fromObject(batchQueryResBean).toString());
 		return messageBean;

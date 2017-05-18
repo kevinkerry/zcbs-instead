@@ -69,6 +69,7 @@ public class RealTimeController {
 	public MessageBean payAndCollectApi(MessageBean messageBean) {
 		MessageBean requestBean = null;
 		ResponseBaseBean responseBaseBean = new ResponseBaseBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			// 验签,解密
 			//requestBean = messageDecodeService.decodeAndVerify(messageBean);
@@ -76,16 +77,18 @@ public class RealTimeController {
 			List<HttpRequestParam> list = new ArrayList<>();
 			list.add(httpRequestParam);
 			String url =urlBean.getDecodeUrl();//"http://localhost:9911/fe/sign/decode";
-			HttpUtils httpUtils = new HttpUtils();
+			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.decodeError.getCode());
 			responseBaseBean.setRespMsg(ResponseTypeEnum.decodeError.getMessage());
 			return encrypt(responseBaseBean, messageBean);
+		}finally {
+			httpUtils.closeConnection();
 		}
 		try {
 			// 获取基础信息
@@ -102,10 +105,8 @@ public class RealTimeController {
 			listen.add(httpRequestParam1);
 			listen.add(httpRequestParam2);
 			String url =urlBean.getEncryptUrl();
-			HttpUtils httpUtils = new HttpUtils();
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
 			/*return messageEncryptService.encryptAndSigntrue(requestBean.getData(),
@@ -115,11 +116,14 @@ public class RealTimeController {
 			responseBaseBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			responseBaseBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
 			return encrypt(responseBaseBean, messageBean);
+		}finally {
+			httpUtils.closeConnection();
 		}
 	}
 
 	private MessageBean encrypt(ResponseBaseBean responseBaseBean, MessageBean messageBean) {
 		MessageBean requestBean=null;
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			HttpRequestParam httpRequestParam1= new HttpRequestParam("enData",JSONObject.fromObject(responseBaseBean).toString());
 			HttpRequestParam httpRequestParam2= new HttpRequestParam("additBean",JSONObject.fromObject(prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId())).toString());
@@ -127,10 +131,9 @@ public class RealTimeController {
 			listen.add(httpRequestParam1);
 			listen.add(httpRequestParam2);
 			String url =urlBean.getEncryptUrl();
-			HttpUtils httpUtils = new HttpUtils();
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
 			/*return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
@@ -138,6 +141,8 @@ public class RealTimeController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}finally {
+			httpUtils.closeConnection();
 		}
 	}
 
@@ -188,6 +193,7 @@ public class RealTimeController {
 		additBean.setAccessType("1");
 		additBean.setMerId(MER_ID);
 		additBean.setEncryMethod("01");
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
 			riskInfo.put("random", RiskInfoUtils.randomInt(32));
@@ -201,10 +207,10 @@ public class RealTimeController {
 			listen.add(httpRequestParam1);
 			listen.add(httpRequestParam2);
 			String url =urlBean.getEncryptUrl();
-			HttpUtils httpUtils = new HttpUtils();
+			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
 			
@@ -212,6 +218,8 @@ public class RealTimeController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}finally {
+			httpUtils.closeConnection();
 		}
 	}
 	private AdditBean prepareAdditbean(String merid){

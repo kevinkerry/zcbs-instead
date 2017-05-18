@@ -49,6 +49,7 @@ public class BatchCollectServiceImpl implements CollectAndPayService {
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		BatchCollectResBean batchCollectResBean = new BatchCollectResBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			BatchCollectReqBean reqBean = (BatchCollectReqBean) JSONObject
 					.toBean(JSONObject.fromObject(messageBean.getData()), BatchCollectReqBean.class);
@@ -74,10 +75,9 @@ public class BatchCollectServiceImpl implements CollectAndPayService {
 			list.add(httpRequestParam);
 			
 			String url = urlBean.getBatchCollectUrl();
-			HttpUtils httpUtils = new HttpUtils();
+			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean = BatchCollection.pay(batchCollectionBean);
 			if (!resultBean.isResultBool()) {
@@ -104,6 +104,8 @@ public class BatchCollectServiceImpl implements CollectAndPayService {
 			batchCollectResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
 			e.printStackTrace();
 			logger.error(ExceptionUtil.getStackTrace(e));
+		}finally {
+			httpUtils.closeConnection();
 		}
 		messageBean.setData(JSONObject.fromObject(batchCollectResBean).toString());
 		return messageBean;

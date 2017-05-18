@@ -42,6 +42,7 @@ public class RealTimeCollectServiceImpl implements CollectAndPayService{
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		RealTimeCollectResBean realTimeCollectResBean=new RealTimeCollectResBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			//解析请求参数到实体类
 			RealTimeCollectReqBean reqBean=(RealTimeCollectReqBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getData()),RealTimeCollectReqBean.class);
@@ -59,7 +60,6 @@ public class RealTimeCollectServiceImpl implements CollectAndPayService{
 				encryptData=(EncryptData) JSONObject.toBean(JSONObject.fromObject(data),EncryptData.class);
 				ValidateLocator.validateBeans(encryptData);
 			}
-			
 			RealtimeCollectionBean realtimeCollectionBean=new RealtimeCollectionBean();
 			BeanCopyUtil.copyBean(realtimeCollectionBean,reqBean);
 			BeanCopyUtil.copyBean(realtimeCollectionBean,encryptData);
@@ -69,10 +69,10 @@ public class RealTimeCollectServiceImpl implements CollectAndPayService{
 			list.add(httpRequestParam);
 			
 			String url = urlBean.getSingleCollectUrl();
-			HttpUtils httpUtils = new HttpUtils();
+			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean= realtimeCollection.pay(realtimeCollectionBean);
 			
@@ -100,6 +100,8 @@ public class RealTimeCollectServiceImpl implements CollectAndPayService{
 			logger.error(ExceptionUtil.getStackTrace(e));
 			realTimeCollectResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			realTimeCollectResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+		}finally{
+			httpUtils.closeConnection();
 		}
 		messageBean.setData(JSONObject.fromObject(realTimeCollectResBean).toString());
 		return messageBean;

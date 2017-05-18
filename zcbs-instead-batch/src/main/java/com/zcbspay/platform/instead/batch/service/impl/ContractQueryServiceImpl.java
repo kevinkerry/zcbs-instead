@@ -46,21 +46,21 @@ public class ContractQueryServiceImpl implements CollectAndPayService {
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
 		ContractQueryResBean contractQueryResBean=new ContractQueryResBean();
+		HttpUtils httpUtils = new HttpUtils();
 		try {
 			ContractQueryReqBean reqBean = (ContractQueryReqBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getData()),
 					ContractQueryReqBean.class);
 			contractQueryResBean = BeanCopyUtil.copyBean(ContractQueryResBean.class, reqBean);
 			ValidateLocator.validateBeans(reqBean);
 			//TODO:这里要修改
-			HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(contractQueryResBean.getContractnum()).toString());
+			/*HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(contractQueryResBean.getContractnum()).toString());
 			List<HttpRequestParam> list = new ArrayList<>();
-			list.add(httpRequestParam);
+			list.add(httpRequestParam);*/
 			
 			String url =urlBean.getBatchContractUrl();
-			HttpUtils httpUtils = new HttpUtils();
 			httpUtils.openConnection();
-			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			httpUtils.closeConnection();
+			String responseContent = httpUtils.executeHttpGet(url+"/"+contractQueryResBean.getContractnum(),Constants.Encoding.UTF_8);
+			
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//resultBean=contractService.findByCode(contractQueryResBean.getContractnum());
 			if (!resultBean.isResultBool()) {
@@ -92,6 +92,8 @@ public class ContractQueryServiceImpl implements CollectAndPayService {
 			logger.error(ExceptionUtil.getStackTrace(e));
 			contractQueryResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 			contractQueryResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
+		}finally {
+			httpUtils.closeConnection();
 		}
 		messageBean.setData(JSONObject.fromObject(contractQueryResBean).toString());
 		return messageBean;
