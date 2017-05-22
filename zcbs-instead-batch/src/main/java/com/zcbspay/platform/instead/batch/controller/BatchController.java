@@ -50,16 +50,14 @@ import net.sf.json.JSONObject;
 public class BatchController {
 
 	private CollectAndPayService collectAndPaySerivce;
-	//@Autowired
-	//private MessageDecodeService messageDecodeService;
-	//@Autowired
-	//private MessageEncryptService messageEncryptService;
-
-	private static final String MER_ID = "200000000000610";
 
 	@Autowired
 	private UrlBean urlBean;
 	
+	
+	private final String accessType="1";
+	
+	private final String encryMethod="01";
 	/**
 	 * 实时代收付接口
 	 * 
@@ -76,7 +74,6 @@ public class BatchController {
 		HttpUtils httpUtils = new HttpUtils();
 		try {
 			// 验签,解密
-			//requestBean= messageDecodeService.decodeAndVerify(messageBean);
 			HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(messageBean).toString());
 			List<HttpRequestParam> list = new ArrayList<>();
 			list.add(httpRequestParam);
@@ -116,10 +113,6 @@ public class BatchController {
 			httpUtils.closeConnection();
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
-			
-			/*return messageEncryptService.encryptAndSigntrue(requestBean.getData(),
-					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));*/
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.fail.getCode());
@@ -145,8 +138,6 @@ public class BatchController {
 			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
-			/*return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
-					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -168,16 +159,7 @@ public class BatchController {
 			list.add(batchCollectAndPayFileContent);
 		}
 		realTimePayReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
-		
-		/*// 确定处理类
-		collectAndPaySerivce = (CollectAndPayService) SpringContextHelper
-							.getBean(BatchTxnTypeEnum.getTxnTypeEnum(realTimePayReqBean.getTxnType()).getClassName());
-		MessageBean messageBean=new MessageBean();
-		messageBean.setData(JSONObject.fromObject(realTimePayReqBean).toString());
-		collectAndPaySerivce.invoke(messageBean);*/
-		
-		
-		return encryptData(realTimePayReqBean);
+		return encryptData(realTimePayReqBean,realTimePayReqBean.getMerId());
 
 	}
 
@@ -190,7 +172,7 @@ public class BatchController {
 			list.add(batchCollectAndPayFileContent);
 		}
 		realTimeCollectReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
-		return encryptData(realTimeCollectReqBean);
+		return encryptData(realTimeCollectReqBean,realTimeCollectReqBean.getMerId());
 	}
 	@ResponseBody
 	@RequestMapping("batchimportsubmit")
@@ -201,29 +183,28 @@ public class BatchController {
 			BatchImportFileContent batchImportFileContent=new BatchImportFileContent();
 			batchImportFileContent=BeanCopyUtil.copyBean(BatchImportFileContent.class, batchCollectAndPayFileContent);
 			batchImportFileContent.setContractnum("00000"+i);
-			//batchCollectAndPayFileContent.setContractnum("00000");
 			list.add(batchImportFileContent);
 		}
 		batchImportReqBean.setFileContent(FlaterUtils.deflater(JSONArray.fromObject(list).toString()));
-		return encryptData(batchImportReqBean);
+		return encryptData(batchImportReqBean,batchImportReqBean.getMerId());
 	}
 	@ResponseBody
 	@RequestMapping("contractsubmit")
 	public MessageBean contractsubmit(ContractQueryReqBean contractQueryReqBean) {
-		return encryptData(contractQueryReqBean);
+		return encryptData(contractQueryReqBean,contractQueryReqBean.getMerId());
 	}
 	@ResponseBody
 	@RequestMapping("tradequery")
 	public MessageBean tradequery(BatchQueryReqBean realTimeQueryReqBean) {
-		return encryptData(realTimeQueryReqBean);
+		return encryptData(realTimeQueryReqBean,realTimeQueryReqBean.getMerId());
 	}
 
-	private MessageBean encryptData(Object object) {
+	private MessageBean encryptData(Object object,String memberId) {
 		MessageBean requestBean=null;
 		AdditBean additBean = new AdditBean();
-		additBean.setAccessType("1");
-		additBean.setMerId(MER_ID);
-		additBean.setEncryMethod("02");
+		additBean.setAccessType(accessType);
+		additBean.setMerId(memberId);
+		additBean.setEncryMethod(encryMethod);
 		try {
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
 			riskInfo.put("random", RiskInfoUtils.randomInt(32));
@@ -243,7 +224,6 @@ public class BatchController {
 			httpUtils.closeConnection();
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
-			//return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(object).toString(), additBean);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -255,9 +235,9 @@ public class BatchController {
 		AdditBean additBean = new AdditBean();
 		try {
 			additBean.setEncryKey(AESUtil.getAESKey());
-			additBean.setAccessType("1");
+			additBean.setAccessType(accessType);
 			additBean.setMerId(merid);
-			additBean.setEncryMethod("01");
+			additBean.setEncryMethod(encryMethod);
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
 			riskInfo.put("random", RiskInfoUtils.randomInt(32));
 			riskInfo.put("timestamp", DateUtils.geCurrentDateTimeStr());

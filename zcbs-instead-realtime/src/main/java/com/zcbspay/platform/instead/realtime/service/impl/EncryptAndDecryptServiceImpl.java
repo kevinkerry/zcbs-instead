@@ -23,13 +23,10 @@ import net.sf.json.JSONObject;
 public class EncryptAndDecryptServiceImpl implements EncryptAndDecryptService {
 	private static final Logger logger = LoggerFactory.getLogger(EncryptAndDecryptServiceImpl.class); 
 	
-	//@Autowired
-	//private MerchMKService merchMKService;
-	
 	@Autowired
 	private UrlBean urlBean;
 	
-	private String AccessType ="1";
+	private final String AccessType ="1";
 	
 	@Override
 	public String decrypt(AdditBean additBean, String data) {

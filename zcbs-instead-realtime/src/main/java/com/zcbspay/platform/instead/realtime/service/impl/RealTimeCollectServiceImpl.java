@@ -72,9 +72,8 @@ public class RealTimeCollectServiceImpl implements CollectAndPayService{
 			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			
+			logger.info("实时代收处理结果:"+responseContent);
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
-			//ResultBean resultBean= realtimeCollection.pay(realtimeCollectionBean);
 			
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());

@@ -1,8 +1,6 @@
 package com.zcbspay.platform.instead.realtime.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -19,7 +17,6 @@ import com.zcbspay.platform.instead.common.enums.ResponseTypeEnum;
 import com.zcbspay.platform.instead.common.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.ExceptionUtil;
-import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
 import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
 import com.zcbspay.platform.instead.realtime.bean.RealTimeQueryReqBean;
@@ -27,17 +24,17 @@ import com.zcbspay.platform.instead.realtime.bean.RealTimeQueryResBean;
 import com.zcbspay.platform.instead.realtime.bean.Reserved;
 import com.zcbspay.platform.instead.realtime.service.CollectAndPayService;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Service("realTimeQueryService")
 public class RealTimeQueryServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(RealTimeQueryServiceImpl.class); 
-//	@Autowired
-//	private OrderQueryService realTimeTradeQuery;
-	
 	@Autowired
 	private UrlBean urlBean;
+	
+	private final String collectFlag="01";
+	
+	private final String payFlag="02";
 	
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
@@ -52,16 +49,16 @@ public class RealTimeQueryServiceImpl implements CollectAndPayService {
 			ValidateLocator.validateBeans(reqBean);
 			String url =null;// 
 			
-			if ("01".equals(reqBean.getOrderType())) {// 实时代收
+			if (collectFlag.equals(reqBean.getOrderType())) {// 实时代收
 				url=urlBean.getSingleQueryCollectUrl();
-			} else if ("02".equals(reqBean.getOrderType())) {// 实时代付
-				url=urlBean.getSinglePayUrl();
+			} else if (payFlag.equals(reqBean.getOrderType())) {// 实时代付
+				url=urlBean.getSingleQueryPayUrl();
 			}
 			
 			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpGet(url+"/"+reqBean.getTn(),Constants.Encoding.UTF_8);
-			
+			logger.info("交易查询结果:"+responseContent);
 			resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			
 			if (!resultBean.isResultBool()) {

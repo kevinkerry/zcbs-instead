@@ -8,9 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-
 
 /**
  * 日期工具类
@@ -41,7 +38,6 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	 */
 	public final static int COMP_MODEL_DATETIME = 3;
 
-	private static Logger logger = Logger.getLogger(DateUtils.class);
 
 	/**
 	 * 要用到的DATE Format的定义
@@ -520,7 +516,6 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		try {
 			sRet = formatter.format(dt).toString();
 		} catch (Exception e) {
-			logger.error(e);
 			sRet = null;
 		}
 
@@ -960,7 +955,6 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		try {
 			date = sdf.parse(dateString);
 		} catch (ParseException e) {
-			logger.error(e);
 		}
 		return date;
 	}
@@ -988,7 +982,6 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		try {
 			date1 = sdf.parse(dateStr);
 		} catch (ParseException e) {
-			logger.error(e);
 		}
 		return date1;
 	}
@@ -1057,7 +1050,6 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 			startDate = DateUtils.parseDate(startDateStr, DateUtils.DATE_FORMAT_DATEONLY);
 			endDate = DateUtils.parseDate(endDateStr, DateUtils.DATE_FORMAT_DATEONLY);
 		} catch (ParseException e) {
-			logger.error(e);
 			return false;
 		}
 		return isOverIntervalLimit(startDate, endDate, interval);
@@ -1201,7 +1193,6 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		try {
 			return formatter.parse(dateStr);
 		} catch (ParseException e) {
-			logger.error(e);
 			return null;
 		}
 	}

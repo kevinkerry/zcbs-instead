@@ -1,8 +1,6 @@
 package com.zcbspay.platform.instead.batch.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -24,7 +22,6 @@ import com.zcbspay.platform.instead.common.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.ExceptionUtil;
 import com.zcbspay.platform.instead.common.utils.FlaterUtils;
-import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
 import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
 
@@ -39,10 +36,12 @@ import net.sf.json.JSONObject;
 @Service("batchQueryService")
 public class BatchQueryServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(BatchQueryServiceImpl.class);
-//	@Autowired
-//	private OrderQueryService batchTradeQuery;
+
 	@Autowired
 	private UrlBean urlBean;
+	
+	private final String collectFlag="01";
+	private final String payFlag ="02";
 
 	@Override
 	public MessageBean invoke(MessageBean messageBean) {
@@ -55,17 +54,17 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 			ValidateLocator.validateBeans(reqBean);
 			ResultBean resultBean = null;
 			String url = null;
-			if ("01".equals(reqBean.getBusiType())) {// 批量代收
+			if (collectFlag.equals(reqBean.getBusiType())) {// 批量代收
 				url=urlBean.getBatchQueryCollectUrl();
-			} else if ("02".equals(reqBean.getBusiType())) {// 批量代付
+			} else if (payFlag.equals(reqBean.getBusiType())) {// 批量代付
 				url=urlBean.getBatchQueryPayUrl();
 			}
 			
 			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpGet(url+"/"+reqBean.getMerId()+"/"+reqBean.getBatchNo()+"/"+reqBean.getTxnDate(),Constants.Encoding.UTF_8);
+			logger.info("批量查询结果:"+responseContent);
 			resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
-			//resultBean = batchTradeQuery.queryConcentrateCollectionBatch(reqBean.getMerId(), reqBean.getBatchNo(),reqBean.getTxnDate());
 			if (!resultBean.isResultBool()) {
 				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
@@ -81,7 +80,8 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 				batchQueryResBean.setRespMsg(ResponseTypeEnum.success.getMessage());
 				
 				Map<String, Class> mapClass=new HashMap<>();
-				mapClass.put("resultObj", FileContentBean.class);
+				mapClass.put("resultObj", BatchResultBean.class);
+				mapClass.put("fileContentList", FileContentBean.class);
 				resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class,mapClass);
 				BatchResultBean batchResultBean = (BatchResultBean) resultBean.getResultObj();
 				BeanCopyUtil.copyBean(batchQueryResBean, batchResultBean);

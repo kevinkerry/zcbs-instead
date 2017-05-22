@@ -34,8 +34,6 @@ public class RealTimePayServiceImpl implements CollectAndPayService{
 	private static final Logger logger = LoggerFactory.getLogger(RealTimePayServiceImpl.class); 
 	@Autowired
 	private EncryptAndDecryptService encryptAndDecryptService;
-//	@Autowired
-//	private RealtimePayment realtimePayment;
 	
 	@Autowired
 	private UrlBean urlBean;
@@ -64,7 +62,7 @@ public class RealTimePayServiceImpl implements CollectAndPayService{
 			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			
+			logger.info("实时代付处理结果:"+responseContent);
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean= realtimePayment.pay(realtimePaymentBean);
 			

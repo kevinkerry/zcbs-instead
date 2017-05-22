@@ -37,9 +37,6 @@ import net.sf.json.JSONObject;
 @Service("batchImportService")
 public class BatchImportServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(BatchImportServiceImpl.class);
-//	@Autowired
-//	private ContractBizService contractService;
-	
 	@Autowired
 	private UrlBean urlBean;
 
@@ -75,7 +72,7 @@ public class BatchImportServiceImpl implements CollectAndPayService {
 			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
-			
+			logger.info("合同批量导入处理结果:"+responseContent);
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean =contractService.importBatchContract(batch);
 			if (!resultBean.isResultBool()) {

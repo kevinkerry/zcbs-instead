@@ -1,8 +1,6 @@
 package com.zcbspay.platform.instead.batch.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -23,7 +21,6 @@ import com.zcbspay.platform.instead.common.exception.DataErrorException;
 import com.zcbspay.platform.instead.common.utils.BeanCopyUtil;
 import com.zcbspay.platform.instead.common.utils.ExceptionUtil;
 import com.zcbspay.platform.instead.common.utils.FlaterUtils;
-import com.zcbspay.platform.instead.common.utils.HttpRequestParam;
 import com.zcbspay.platform.instead.common.utils.HttpUtils;
 import com.zcbspay.platform.instead.common.utils.ValidateLocator;
 
@@ -37,9 +34,6 @@ import net.sf.json.JSONObject;
 @Service("contractQueryService")
 public class ContractQueryServiceImpl implements CollectAndPayService {
 	private static final Logger logger = LoggerFactory.getLogger(ContractQueryServiceImpl.class);
-//	@Autowired
-//	private ContractBizService contractService;
-	
 	@Autowired
 	private UrlBean urlBean;
 
@@ -52,15 +46,11 @@ public class ContractQueryServiceImpl implements CollectAndPayService {
 					ContractQueryReqBean.class);
 			contractQueryResBean = BeanCopyUtil.copyBean(ContractQueryResBean.class, reqBean);
 			ValidateLocator.validateBeans(reqBean);
-			//TODO:这里要修改
-			/*HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(contractQueryResBean.getContractnum()).toString());
-			List<HttpRequestParam> list = new ArrayList<>();
-			list.add(httpRequestParam);*/
 			
 			String url =urlBean.getBatchContractUrl();
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpGet(url+"/"+contractQueryResBean.getContractnum(),Constants.Encoding.UTF_8);
-			
+			logger.info("合同查询结果:"+responseContent);
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//resultBean=contractService.findByCode(contractQueryResBean.getContractnum());
 			if (!resultBean.isResultBool()) {

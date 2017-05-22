@@ -22,7 +22,7 @@ body {
 }
 #content{
 	float:left;
-	text-align:center;
+	text-align:right;
 	padding-right:200px;	
 }
 #links{
@@ -34,7 +34,7 @@ body {
 }
 #footer{
 	clear:both;			
-	text-align:center;
+	text-align:right;
 	height:30px;
 	border:1px solid #000000;
 }
@@ -42,7 +42,7 @@ body {
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <div id="container">
 	<div id="banner">
-		<strong>加密解密demo</strong>
+		<strong>批量代收代付接口测试</strong>
 	</div>
 	
 	<div id="links">
@@ -64,7 +64,6 @@ body {
 			<input id="data" type="hidden" name="data" />
 		</div>
 		<div>
-		<h2>解密:<input type="submit" value="解密"></h2>
 		</div>
 		</form>
 	</div>
@@ -75,28 +74,27 @@ body {
 		<form id="tradequery" action="tradequery">
 			<table>
 			<tr>
-				<td style="text-align: center">	版本	:<input type="text"  name="version" value="1.0"/></td>
-				<td style="text-align: center">	编码方式	:<input type="text"  name="encoding" value="1"/></td>
+				<td style="text-align: right">	版本	:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: right">	编码方式	:<input type="text"  name="encoding" value="1"/></td>
 			</tr>
 			<tr>
-				<td style="text-align: center">	交易类型	:<input type="text"  name="txnType" value="03"/></td>
-				<td style="text-align: center">	交易子类	:<input type="text"  name="txnSubType" value="00"/></td>
+				<td style="text-align: right">	交易类型	:<input type="text"  name="txnType" value="03"/></td>
+				<td style="text-align: right">	交易子类	:<input type="text"  name="txnSubType" value="00"/></td>
 				</tr>
 			<tr>
-				<td style="text-align: center">	产品类型	:<input type="text"  name="bizType" value="000003"/></td>
-				<td style="text-align: center">	商户代码	:<input type="text"  name="merId" value="200000000000610"/></td>
+				<td style="text-align: right">	产品类型	:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: right">	委托机构代码	:<input type="text"  name="merId" value="200000000000610"/></td>
 				</tr>
 			<tr>
-				<td style="text-align: center">	批次号	:<input type="text"  name="batchNo" value="0006"/></td>
-				<td style="text-align: center">	原批次交易日期	:<input type="text"  name="txnDate" value="20170305"/></td>
+				<td style="text-align: right">	批次号	:<input type="text"  name="batchNo" value="0006"/></td>
+				<td style="text-align: right">	原批次交易日期	:<input type="text"  name="txnDate" value="20170305"/></td>
 				</tr>
 			<tr>
-				<td style="text-align: center">	批次发送时间	:<input type="text"  name="txnTime" value="050505"/></td>
-				<td style="text-align: center">	订单类型	:<input type="text"  name="busiType" value="01"/></td>
-				</tr>
+				<td style="text-align: right">	批次发送时间	:<input type="text"  name="txnTime" value="050505"/></td>
+				<td style="text-align: right">	订单类型	:<input type="text"  name="busiType" value="01"/></td>
+			</tr>
 			</table>
-			<h2>加密:<input type="button" value="加密" onclick="enc('tradequery')"></h2>
-			<h2>请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
+			<h2>加密:<input type="button" value="加密" onclick="enc('tradequery')">请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
 		</form> 
 	</div>
 	<div id="links">
@@ -104,58 +102,58 @@ body {
 		<form id="paysubmit" action="paysubmit"> 
 			<table>
 				<tr>
-				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
-				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				<td style="text-align: right">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: right">编码方式:<input type="text"  name="encoding" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="02"/></td>
-				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				<td style="text-align: right">交易类型:<input type="text"  name="txnType" value="02"/></td>
+				<td style="text-align: right">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
-				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				<td style="text-align: right">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: right">委托机构代码:<input type="text"  name="merId" value="200000000000610"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">通知地址:<input type="text"  name="backUrl" value="www.baidu.com"/></td>
-				<td style="text-align: center">批次号:<input type="text"  name="batchNo" value="0006"/></td>
+				<td style="text-align: right">通知地址:<input type="text"  name="backUrl" value="www.baidu.com"/></td>
+				<td style="text-align: right">批次号:<input type="text"  name="batchNo" value="0006"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
-				<td style="text-align: center">总笔数:<input type="text"  name="totalQty" value="10"/></td>
+				<td style="text-align: right">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
+				<td style="text-align: right">总笔数:<input type="text"  name="totalQty" value="10"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">总金额 :<input type="text"  name="totalAmt" value="10"/></td>
-				<td style="text-align: center">文件内容:<input type="text"  name="fileContent" value="11"/></td>
+				<td style="text-align: right">总金额 :<input type="text"  name="totalAmt" value="10"/></td>
+				<td style="text-align: right">文件内容:<input type="text"  name="fileContent" value="11"/></td>
 				</tr>
-				
-				
-				<tr>
-				<td style="text-align: center">	商户订单号	:<input type="text"  name="orderId" value="1111"/></td>
-				<td style="text-align: center">	交易币种	:<input type="text"  name="currencyCode" value="156"/></td>
+				<tr  style="background-color:red">
+					<td><<========文件域内容===========</td>
+					<td>========文件域内容===========>></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	单笔金额	:<input type="text"  name="amt" value="13"/></td>
-				<td style="text-align: center">	付款人银行号	:<input type="text"  name="debtorBank" value="1"/></td>
+				<td style="text-align: right">	委托机构订单号	:<input type="text"  name="orderId" value="1111"/></td>
+				<td style="text-align: right">	交易币种	:<input type="text"  name="currencyCode" value="156"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	付款人账号	:<input type="text"  name="debtorAccount" value="1111"/></td>
-				<td style="text-align: center">	付款人名称	:<input type="text"  name="debtorName" value="1111"/></td>
+				<td style="text-align: right">	单笔金额	:<input type="text"  name="amt" value="13"/></td>
+				<td style="text-align: right">	付款人银行号	:<input type="text"  name="debtorBank" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	付款合同号	:<input type="text"  name="debtorConsign" value="10000000002103"/></td>
-				<td style="text-align: center">	收款人银行号	:<input type="text"  name="creditorBank" value="1"/></td>
+				<td style="text-align: right">	付款人账号	:<input type="text"  name="debtorAccount" value="1111"/></td>
+				<td style="text-align: right">	付款人名称	:<input type="text"  name="debtorName" value="1111"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	收款人账号	:<input type="text"  name="creditorAccount" value="1"/></td>
-				<td style="text-align: center">	收款人名称	:<input type="text"  name="creditorName" value="1"/></td>
+				<td style="text-align: right">	付款合同号	:<input type="text"  name="debtorConsign" value="10000000002103"/></td>
+				<td style="text-align: right">	收款人银行号	:<input type="text"  name="creditorBank" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	业务种类编码	:<input type="text"  name="proprietary" value="21"/></td>
-				<td style="text-align: center">	摘要	:<input type="text"  name="summary" value="22"/></td>
+				<td style="text-align: right">	收款人账号	:<input type="text"  name="creditorAccount" value="1"/></td>
+				<td style="text-align: right">	收款人名称	:<input type="text"  name="creditorName" value="1"/></td>
+				</tr>
+				<tr>
+				<td style="text-align: right">	摘要	:<input type="text"  name="summary" value="22"/></td>
 				</tr>
 			</table>
-			<h2>加密:<input type="button" value="加密" onclick="enc('paysubmit')"></h2>
-			<h2>请求:<input type="button" value="请求接口" onclick="askApi('paysubmit')"></h2>
+			<h2>加密:<input type="button" value="加密" onclick="enc('paysubmit')">请求:<input type="button" value="请求接口" onclick="askApi('paysubmit')"></h2>
 		</form>
 	</div>
 	<div id="links">
@@ -163,130 +161,113 @@ body {
 		<form id="collectsubmit" action="collectsubmit"> 
 			<table>
 			<tr>
-				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
-				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				<td style="text-align: right">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: right">编码方式:<input type="text"  name="encoding" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="01"/></td>
-				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				<td style="text-align: right">交易类型:<input type="text"  name="txnType" value="01"/></td>
+				<td style="text-align: right">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
-				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				<td style="text-align: right">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: right">委托机构代码:<input type="text"  name="merId" value="200000000000610"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">通知地址:<input type="text"  name="backUrl" value="www.baidu.com"/></td>
-				<td style="text-align: center">批次号:<input type="text"  name="batchNo" value="0006"/></td>
+				<td style="text-align: right">通知地址:<input type="text"  name="backUrl" value="www.baidu.com"/></td>
+				<td style="text-align: right">批次号:<input type="text"  name="batchNo" value="0006"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
-				<td style="text-align: center">总笔数:<input type="text"  name="totalQty" value="10"/></td>
+				<td style="text-align: right">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
+				<td style="text-align: right">总笔数:<input type="text"  name="totalQty" value="10"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">总金额 :<input type="text"  name="totalAmt" value="10"/></td>
-				<td style="text-align: center">文件内容:<input type="text"  name="fileContent" value="11"/></td>
+				<td style="text-align: right">总金额 :<input type="text"  name="totalAmt" value="10"/></td>
+				<td style="text-align: right">文件内容:<input type="text"  name="fileContent" value="11"/></td>
 				</tr>
-				
-				
-				<tr>
-				<td style="text-align: center">	商户订单号	:<input type="text"  name="orderId" value="1111"/></td>
-				<td style="text-align: center">	交易币种	:<input type="text"  name="currencyCode" value="156"/></td>
+				<tr  style="background-color:red">
+					<td><<========文件域内容===========</td>
+					<td>========文件域内容===========>></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	单笔金额	:<input type="text"  name="amt" value="13"/></td>
-				<td style="text-align: center">	付款人银行号	:<input type="text"  name="debtorBank" value="1"/></td>
+				<td style="text-align: right">	委托机构单号	:<input type="text"  name="orderId" value="1111"/></td>
+				<td style="text-align: right">	交易币种	:<input type="text"  name="currencyCode" value="156"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	付款人账号	:<input type="text"  name="debtorAccount" value="1111"/></td>
-				<td style="text-align: center">	付款人名称	:<input type="text"  name="debtorName" value="1111"/></td>
+				<td style="text-align: right">	单笔金额	:<input type="text"  name="amt" value="13"/></td>
+				<td style="text-align: right">	付款人银行号	:<input type="text"  name="debtorBank" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	付款合同号	:<input type="text"  name="debtorConsign" value="10000000002103"/></td>
-				<td style="text-align: center">	收款人银行号	:<input type="text"  name="creditorBank" value="1"/></td>
+				<td style="text-align: right">	付款人账号	:<input type="text"  name="debtorAccount" value="1111"/></td>
+				<td style="text-align: right">	付款人名称	:<input type="text"  name="debtorName" value="1111"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	收款人账号	:<input type="text"  name="creditorAccount" value="1"/></td>
-				<td style="text-align: center">	收款人名称	:<input type="text"  name="creditorName" value="1"/></td>
+				<td style="text-align: right">	付款合同号	:<input type="text"  name="debtorConsign" value="10000000002103"/></td>
+				<td style="text-align: right">	收款人银行号	:<input type="text"  name="creditorBank" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">	业务种类编码	:<input type="text"  name="proprietary" value="21"/></td>
-				<td style="text-align: center">	摘要	:<input type="text"  name="summary" value="22"/></td>
+				<td style="text-align: right">	收款人账号	:<input type="text"  name="creditorAccount" value="1"/></td>
+				<td style="text-align: right">	收款人名称	:<input type="text"  name="creditorName" value="1"/></td>
+				</tr>
+				<tr>
+					<td style="text-align: right">	摘要	:<input type="text"  name="summary" value="22"/></td>
 				</tr>
 			</table>
-			<h2>加密:<input type="button" value="加密" onclick="enc('collectsubmit')"></h2>
-			<h2>请求:<input type="button" value="请求接口" onclick="askApi('collectsubmit')"></h2>
+			<h2>加密:<input type="button" value="加密" onclick="enc('collectsubmit')">请求:<input type="button" value="请求接口" onclick="askApi('collectsubmit')"></h2>
 			</form>
 	</div>
 	<div id="links">
-		<h2>批量导入</h2>
+		<h2>批量合同导入</h2>
 		<form id="batchimportsubmit" action="batchimportsubmit"> 
 			<table>
 			<tr>
-				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
-				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				<td style="text-align: right">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: right">编码方式:<input type="text"  name="encoding" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="05"/></td>
-				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				<td style="text-align: right">交易类型:<input type="text"  name="txnType" value="05"/></td>
+				<td style="text-align: right">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
-				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				<td style="text-align: right">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: right">委托机构号:<input type="text"  name="merId" value="200000000000610"/></td>
 				</tr>
 				<tr>
-					<td style="text-align: center">批次号:<input type="text"  name="batchNo" value="0006"/></td>
-					<td style="text-align: center">订单发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
+					<td style="text-align: right">批次号:<input type="text"  name="batchNo" value="0006"/></td>
+					<td style="text-align: right">批次发送时间:<input type="text"  name="txnTime" value="20170305050505"/></td>
+				</tr>
+				<tr  style="background-color:red">
+					<td><<========文件域内容===========</td>
+					<td>========文件域内容===========>></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">合同编号:<input type="text"  name="contractnum" value="0006"/></td>
-				<td style="text-align: center">合同类型:<input type="text"  name="contracttype" value="00"/></td>
+				<td style="text-align: right">合同编号:<input type="text"  name="contractnum" value="0006"/></td>
+				<td style="text-align: right">合同类型:<input type="text"  name="contracttype" value="00"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">付款人名称:<input type="text"  name="debtorname" value="0008"/></td>
-				<td style="text-align: center">付款人账号:<input type="text"  name="debtoraccountno" value="0009"/></td>
+				<td style="text-align: right">付款人名称:<input type="text"  name="debtorname" value="0008"/></td>
+				<td style="text-align: right">付款人账号:<input type="text"  name="debtoraccountno" value="0009"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">付款行行号:<input type="text"  name="debtorbranchcode" value="0010"/></td>
-				<td style="text-align: center">付款单笔金额上限:<input type="text"  name="debtoramountlimit" value="0011"/></td>
+				<td style="text-align: right">付款行行号:<input type="text"  name="debtorbranchcode" value="0010"/></td>
+				
+				</tr>
+				
+				<tr>
+				<td style="text-align: right">收款人名称:<input type="text"  name="creditorname" value="0016"/></td>
+				<td style="text-align: right">收款人账号:<input type="text"  name="creditoraccountno" value="0017"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">付款金额限制类型:<input type="text"  name="debtortransamtlimittype" value="00"/></td>
-				<td style="text-align: center">付款累计金额上限:<input type="text"  name="debtoraccuamountlimit" value="0013"/></td>
+				<td style="text-align: right">收款行行号:<input type="text"  name="creditorbranchcode" value="0018"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">付款次数限制类型:<input type="text"  name="debtortransnumlimittype" value="00"/></td>
-				<td style="text-align: center">付款次数限制:<input type="text"  name="debtortranslimit" value="0015"/></td>
+				<td style="text-align: right">合约开始日期:<input type="text"  name="signdate" value="0024"/></td>
+				<td style="text-align: right">合约终止日期:<input type="text"  name="expirydate" value="0025"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">收款人名称:<input type="text"  name="creditorname" value="0016"/></td>
-				<td style="text-align: center">收款人账号:<input type="text"  name="creditoraccountno" value="0017"/></td>
-				</tr>
-				<tr>
-				<td style="text-align: center">收款行行号:<input type="text"  name="creditorbranchcode" value="0018"/></td>
-				<td style="text-align: center">收款单笔金额上限:<input type="text"  name="creditoramountlimit" value="0019"/></td>
-				</tr>
-				<tr>
-				<td style="text-align: center">收款金额限制类型:<input type="text"  name="creditortransamtlimittype" value="00"/></td>
-				<td style="text-align: center">收款累计金额上限:<input type="text"  name="creditoraccuamountlimit" value="0021"/></td>
-				</tr>
-				<tr>
-				<td style="text-align: center">收款次数限制类型:<input type="text"  name="creditortransnumlimittype" value="00"/></td>
-				<td style="text-align: center">收款次数限制:<input type="text"  name="creditortranslimit" value="0023"/></td>
-				</tr>
-				<tr>
-				<td style="text-align: center">合约开始日期:<input type="text"  name="signdate" value="0024"/></td>
-				<td style="text-align: center">合约终止日期:<input type="text"  name="expirydate" value="0025"/></td>
-				</tr>
-				<tr>
-				<td style="text-align: center">合同附件名称:<input type="text"  name="fileaddress" value="0026"/></td>
-				<td style="text-align: center">业务类型:<input type="text"  name="categorypurpose" value="00"/></td>
-				</tr>
-				<tr>
-				<td style="text-align: center">业务种类:<input type="text"  name="proprietary" value="0028"/></td>
+				<td style="text-align: right">合同附件名称:<input type="text"  name="fileaddress" value="0026"/></td>
 				</tr>
 			</table>
-			<h2>加密:<input type="button" value="加密" onclick="enc('batchimportsubmit')"></h2>
-			<h2>请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
+			<h2>加密:<input type="button" value="加密" onclick="enc('batchimportsubmit')">请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
 			</form>
 	</div>
 	<div id="links">
@@ -294,23 +275,22 @@ body {
 		<form id="contractsubmit" action="contractsubmit"> 
 			<table>
 			<tr>
-				<td style="text-align: center">版本:<input type="text"  name="version" value="1.0"/></td>
-				<td style="text-align: center">编码方式:<input type="text"  name="encoding" value="1"/></td>
+				<td style="text-align: right">版本:<input type="text"  name="version" value="1.0"/></td>
+				<td style="text-align: right">编码方式:<input type="text"  name="encoding" value="1"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">交易类型:<input type="text"  name="txnType" value="06"/></td>
-				<td style="text-align: center">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
+				<td style="text-align: right">交易类型:<input type="text"  name="txnType" value="06"/></td>
+				<td style="text-align: right">交易子类:<input type="text"  name="txnSubType" value="00"/></td>
 				</tr>
 				<tr>
-				<td style="text-align: center">产品类型:<input type="text"  name="bizType" value="000003"/></td>
-				<td style="text-align: center">商户代码:<input type="text"  name="merId" value="200000000000610"/></td>
+				<td style="text-align: right">产品类型:<input type="text"  name="bizType" value="000003"/></td>
+				<td style="text-align: right">委托机构代码:<input type="text"  name="merId" value="200000000000610"/></td>
 				</tr>
 				<tr>
-					<td style="text-align: center">合同编号:<input type="text"  name="contractnum" value="0006"/></td>
+					<td style="text-align: right">合同编号:<input type="text"  name="contractnum" value="0006"/></td>
 				</tr>
 			</table>
-			<h2>加密:<input type="button" value="加密" onclick="enc('contractsubmit')"></h2>
-			<h2>请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
+			<h2>加密:<input type="button" value="加密" onclick="enc('contractsubmit')">请求:<input type="button" value="请求接口" onclick="askApi()"></h2>
 			</form>
 	</div>
 	<div id="links">

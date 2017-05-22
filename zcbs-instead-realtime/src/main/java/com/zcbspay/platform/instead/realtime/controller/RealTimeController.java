@@ -44,18 +44,17 @@ import net.sf.json.JSONObject;
 @RequestMapping("/realtime/")
 public class RealTimeController {
 	private CollectAndPayService collectAndPaySerivce;
-	//@Autowired
-	//private MessageDecodeService messageDecodeService;
-	//@Autowired
-	//private MessageEncryptService messageEncryptService;
-
 	@Autowired
 	private UrlBean urlBean;
 	
 	@Autowired
 	private EncryptAndDecryptService encryptAndDecryptService;
 
-	private static final String MER_ID = "200000000000610";
+	private static final String MER_ID = "200000000001588";
+	
+	private final String accessType="1";
+	
+	private final String encryMethod="01";
 	/**
 	 * 实时代收付接口
 	 * 
@@ -72,11 +71,10 @@ public class RealTimeController {
 		HttpUtils httpUtils = new HttpUtils();
 		try {
 			// 验签,解密
-			//requestBean = messageDecodeService.decodeAndVerify(messageBean);
 			HttpRequestParam httpRequestParam= new HttpRequestParam("data",JSONObject.fromObject(messageBean).toString());
 			List<HttpRequestParam> list = new ArrayList<>();
 			list.add(httpRequestParam);
-			String url =urlBean.getDecodeUrl();//"http://localhost:9911/fe/sign/decode";
+			String url =urlBean.getDecodeUrl();
 			
 			httpUtils.openConnection();
 			String responseContent = httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
@@ -109,8 +107,6 @@ public class RealTimeController {
 			String responseContent = httpUtils.executeHttpPost(url,listen,Constants.Encoding.UTF_8);
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
-			/*return messageEncryptService.encryptAndSigntrue(requestBean.getData(),
-					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBaseBean.setRespCode(ResponseTypeEnum.fail.getCode());
@@ -136,8 +132,6 @@ public class RealTimeController {
 			
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
-			/*return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(responseBaseBean).toString(),
-					prepareAdditbean(((AdditBean) JSONObject.toBean(JSONObject.fromObject(messageBean.getAddit()), AdditBean.class)).getMerId()));*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -155,11 +149,11 @@ public class RealTimeController {
 	@RequestMapping("paysubmit")
 	public MessageBean paysubmit(RealTimePayReqBean realTimePayReqBean, EncryptData encryptData) {
 		AdditBean additBean = new AdditBean();
-		additBean.setMerId(MER_ID);
-		additBean.setAccessType("1");
+		additBean.setMerId(realTimePayReqBean.getMerId());
+		additBean.setAccessType(accessType);
 		realTimePayReqBean.setEncryptData(
 				encryptAndDecryptService.encrypt(additBean, JSONObject.fromObject(encryptData).toString()));
-		return encryptData(realTimePayReqBean);
+		return encryptData(realTimePayReqBean,realTimePayReqBean.getMerId());
 
 	}
 
@@ -168,11 +162,11 @@ public class RealTimeController {
 	public MessageBean collectsubmit(RealTimeCollectReqBean realTimeCollectReqBean, EncryptData encryptData) {
 
 		AdditBean additBean = new AdditBean();
-		additBean.setMerId(MER_ID);
-		additBean.setAccessType("1");
+		additBean.setMerId(realTimeCollectReqBean.getMerId());
+		additBean.setAccessType(accessType);
 		realTimeCollectReqBean.setEncryptData(
 				encryptAndDecryptService.encrypt(additBean, JSONObject.fromObject(encryptData).toString()));
-		return encryptData(realTimeCollectReqBean);
+		return encryptData(realTimeCollectReqBean,realTimeCollectReqBean.getMerId());
 	}
 
 	@ResponseBody
@@ -184,15 +178,15 @@ public class RealTimeController {
 		MessageBean messageBean =new MessageBean();
 		messageBean.setData(JSONObject.fromObject(realTimeQueryReqBean).toString());
 		collectAndPaySerivce.invoke(messageBean);
-		return encryptData(realTimeQueryReqBean);
+		return encryptData(realTimeQueryReqBean,null);
 	}
 
-	private MessageBean encryptData(Object object) {
+	private MessageBean encryptData(Object object,String merid) {
 		MessageBean requestBean=null;
 		AdditBean additBean = new AdditBean();
-		additBean.setAccessType("1");
-		additBean.setMerId(MER_ID);
-		additBean.setEncryMethod("01");
+		additBean.setAccessType(accessType);
+		additBean.setMerId(merid==null?MER_ID:merid);
+		additBean.setEncryMethod(encryMethod);
 		HttpUtils httpUtils = new HttpUtils();
 		try {
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
@@ -213,8 +207,6 @@ public class RealTimeController {
 			
 			requestBean=(MessageBean) JSONObject.toBean(JSONObject.fromObject(responseContent),MessageBean.class);
 			return requestBean;
-			
-			/*return messageEncryptService.encryptAndSigntrue(JSONObject.fromObject(object).toString(), additBean);*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -226,9 +218,9 @@ public class RealTimeController {
 		AdditBean additBean = new AdditBean();
 		try {
 			additBean.setEncryKey(AESUtil.getAESKey());
-			additBean.setAccessType("1");
+			additBean.setAccessType(accessType);
 			additBean.setMerId(merid);
-			additBean.setEncryMethod("01");
+			additBean.setEncryMethod(encryMethod);
 			Map<String, Object> riskInfo = new TreeMap<String, Object>();
 			riskInfo.put("random", RiskInfoUtils.randomInt(32));
 			riskInfo.put("timestamp", DateUtils.geCurrentDateTimeStr());
@@ -237,7 +229,6 @@ public class RealTimeController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return additBean;
 		
 	}
