@@ -7,5 +7,7 @@ public interface EncryptAndDecryptService {
 	public String decrypt(AdditBean additBean,String data);
 	
 	public String encrypt(AdditBean additBean,String data);
+	
+	public String localEncrypt(AdditBean additBean,String data);
 
 }

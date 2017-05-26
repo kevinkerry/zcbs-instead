@@ -212,6 +212,26 @@ body {
 		
 		</div>
 	</div>
+	<div id="links">
+		<h2>加密后的密文</h2>
+		<form id="tForm" action="deco">
+			<div style="width:100% ;word-wrap:break-word; overflow:hidden;">
+				<h3>sign:</h3>
+				<div id="divsign"></div>
+				<input id="sign" type="hidden" name="sign" />
+			</div>
+			<div style="width:100% ;word-wrap:break-word; overflow:hidden;">
+				<h3>addit:</h3>
+				<div id="divaddit"></div>
+				<input id="addit" type="hidden" name="addit" '/>
+			</div>
+			<div style="width:100% ;word-wrap:break-word; overflow:hidden;">
+				<h3>data:</h3>
+				<div id="divdata"></div>
+				<input id="data" type="hidden" name="data" />
+			</div>
+		</form>
+	</div>
 </div>
 <script>
 	function askApi(){

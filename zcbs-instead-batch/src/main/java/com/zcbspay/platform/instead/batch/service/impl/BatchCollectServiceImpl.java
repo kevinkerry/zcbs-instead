@@ -79,14 +79,17 @@ public class BatchCollectServiceImpl implements CollectAndPayService {
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean = BatchCollection.pay(batchCollectionBean);
 			if (!resultBean.isResultBool()) {
-				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
+				/*ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
 					batchCollectResBean.setRespCode(responseTypeEnum.getCode());
 					batchCollectResBean.setRespMsg(resultBean.getErrMsg().toString());
 				}else {
 					batchCollectResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 					batchCollectResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
-				}
+				}*/
+				batchCollectResBean.setRespCode(resultBean.getErrCode().toString());
+				batchCollectResBean.setRespMsg(resultBean.getErrMsg().toString());
+				
 			} else {
 				batchCollectResBean.setTn(resultBean.getResultObj().toString());
 				batchCollectResBean.setRespCode(ResponseTypeEnum.success.getCode());

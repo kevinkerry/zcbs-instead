@@ -45,7 +45,7 @@ public class BatchImportFileContent implements Serializable  {
 	//@Length(max = 2,message="[付款次数限制类型]长度不符合规范")
 	private String	debtortransnumlimittype	;//	付款次数限制类型
 	//@Length(max = 12,message="[付款次数限制]长度不符合规范")
-	private String	debtortranslimit	;//	付款次数限制
+	private String	debtortranslimit="0"	;//	付款次数限制
 	@Length(max = 60,message="[收款人名称]长度不符合规范")
 	@NotEmpty(message="[收款人名称]不能为空")
 	private String	creditorname	;//	收款人名称
@@ -64,7 +64,7 @@ public class BatchImportFileContent implements Serializable  {
 	//@Length(max = 2,message="[收款次数限制类型]长度不符合规范")
 	private String	creditortransnumlimittype	;//	收款次数限制类型
 	//@Length(max = 12,message="[收款次数限制]长度不符合规范")
-	private String	creditortranslimit	;//	收款次数限制
+	private String	creditortranslimit="0"	;//	收款次数限制
 	@Length(max = 8,message="[合约开始日期]长度不符合规范")
 	@NotEmpty(message="[合约开始日期]不能为空")
 	private String	signdate	;//	合约开始日期

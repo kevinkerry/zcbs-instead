@@ -54,14 +54,16 @@ public class ContractQueryServiceImpl implements CollectAndPayService {
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//resultBean=contractService.findByCode(contractQueryResBean.getContractnum());
 			if (!resultBean.isResultBool()) {
-				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
+				/*ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
 					contractQueryResBean.setRespCode(responseTypeEnum.getCode());
 					contractQueryResBean.setRespMsg(resultBean.getErrMsg().toString());
 				}else {
 					contractQueryResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 					contractQueryResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
-				}
+				}*/
+				contractQueryResBean.setRespCode(resultBean.getErrCode().toString());
+				contractQueryResBean.setRespMsg(resultBean.getErrMsg().toString());
 			} else {
 				contractQueryResBean.setRespCode(ResponseTypeEnum.success.getCode());
 				contractQueryResBean.setRespMsg(ResponseTypeEnum.success.getMessage());

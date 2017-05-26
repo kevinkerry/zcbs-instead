@@ -66,14 +66,16 @@ public class BatchQueryServiceImpl implements CollectAndPayService {
 			logger.info("批量查询结果:"+responseContent);
 			resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			if (!resultBean.isResultBool()) {
-				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
+				/*ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
 					batchQueryResBean.setRespCode(responseTypeEnum.getCode());
 					batchQueryResBean.setRespMsg(resultBean.getErrMsg().toString());
 				}else {
 					batchQueryResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 					batchQueryResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
-				}
+				}*/
+				batchQueryResBean.setRespCode(resultBean.getErrCode().toString());
+				batchQueryResBean.setRespMsg(resultBean.getErrMsg().toString());
 				
 			} else {
 				batchQueryResBean.setRespCode(ResponseTypeEnum.success.getCode());

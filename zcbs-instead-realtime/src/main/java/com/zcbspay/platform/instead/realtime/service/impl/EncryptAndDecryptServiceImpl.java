@@ -32,7 +32,7 @@ public class EncryptAndDecryptServiceImpl implements EncryptAndDecryptService {
 	public String decrypt(AdditBean additBean, String data) {
 		RSAHelper rsa = null;
 		if (AccessType.equals(additBean.getAccessType())) {
-			rsa = getRsa(additBean);
+			rsa = getRsa(additBean,false);
 		} else {
 			logger.error("未知的接入方式");
 			return null;
@@ -44,7 +44,7 @@ public class EncryptAndDecryptServiceImpl implements EncryptAndDecryptService {
 	public String encrypt(AdditBean additBean, String data) {
 		RSAHelper rsa = null;
 		if (AccessType.equals(additBean.getAccessType())) {
-			rsa = getRsa(additBean);
+			rsa = getRsa(additBean,true);
 		} else {
 			logger.error("未知的接入方式");
 			return null;
@@ -52,7 +52,7 @@ public class EncryptAndDecryptServiceImpl implements EncryptAndDecryptService {
 		return rsa.encrypt(data);
 	}
 	@SuppressWarnings("unchecked")
-	private RSAHelper getRsa(AdditBean additBean) {
+	private RSAHelper getRsa(AdditBean additBean,Boolean isEncrypt) {
 		RSAHelper rsa=null;
 		HttpRequestParam httpRequestParam= new HttpRequestParam("data",additBean.getMerId());
 		List<HttpRequestParam> list = new ArrayList<>();
@@ -65,13 +65,47 @@ public class EncryptAndDecryptServiceImpl implements EncryptAndDecryptService {
 			httpUtils.openConnection();
 			responseContent= httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
 			Map<String, Object> re=(Map<String, Object>) JSONObject.toBean(JSONObject.fromObject(responseContent),Map.class);
+			if (isEncrypt) {  
+				rsa = new RSAHelper(re.get("memberpub").toString(), re.get("memberpri").toString());
+			}else{
+				rsa = new RSAHelper(re.get("localpub").toString(), re.get("localpri").toString());
+			}
 			
-			rsa = new RSAHelper(re.get("localpub").toString(), re.get("localpri").toString());
 		} catch (HttpException e) {
 			e.printStackTrace();
 		}finally{
 			httpUtils.closeConnection();
 		}
 		return rsa;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String localEncrypt(AdditBean additBean, String data) {
+		RSAHelper rsa = null;
+		if (AccessType.equals(additBean.getAccessType())) {
+			HttpRequestParam httpRequestParam= new HttpRequestParam("data",additBean.getMerId());
+			List<HttpRequestParam> list = new ArrayList<>();
+			list.add(httpRequestParam);
+			
+			String url = urlBean.getMkUrl();
+			HttpUtils httpUtils = new HttpUtils();
+			String responseContent =null;
+			try {
+				httpUtils.openConnection();
+				responseContent= httpUtils.executeHttpPost(url,list,Constants.Encoding.UTF_8);
+				Map<String, Object> re=(Map<String, Object>) JSONObject.toBean(JSONObject.fromObject(responseContent),Map.class);
+				rsa = new RSAHelper(re.get("localpub").toString(), re.get("localpri").toString());
+				
+			} catch (HttpException e) {
+				e.printStackTrace();
+			}finally{
+				httpUtils.closeConnection();
+			}
+		} else {
+			logger.error("未知的接入方式");
+			return null;
+		}
+		return rsa.encrypt(data);
 	}
 }

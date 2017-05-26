@@ -76,14 +76,16 @@ public class BatchImportServiceImpl implements CollectAndPayService {
 			ResultBean resultBean=(ResultBean) JSONObject.toBean(JSONObject.fromObject(responseContent), ResultBean.class);
 			//ResultBean resultBean =contractService.importBatchContract(batch);
 			if (!resultBean.isResultBool()) {
-				ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
+				/*ResponseTypeEnum responseTypeEnum=ResponseTypeEnum.getTxnTypeEnumByInCode(resultBean.getErrCode());
 				if (responseTypeEnum!=null) {
 					batchImportResBean.setRespCode(responseTypeEnum.getCode());
 					batchImportResBean.setRespMsg(resultBean.getErrMsg().toString());
 				}else {
 					batchImportResBean.setRespCode(ResponseTypeEnum.fail.getCode());
 					batchImportResBean.setRespMsg(ResponseTypeEnum.fail.getMessage());
-				}
+				}*/
+				batchImportResBean.setRespCode(resultBean.getErrCode().toString());
+				batchImportResBean.setRespMsg(resultBean.getErrMsg().toString());
 			}else {
 				batchImportResBean.setRespCode(ResponseTypeEnum.success.getCode());
 				batchImportResBean.setRespMsg(ResponseTypeEnum.success.getMessage());
